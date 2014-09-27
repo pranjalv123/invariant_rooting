@@ -1,4 +1,5 @@
 import dendropy
+import itertools
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
 
@@ -87,8 +88,9 @@ def get_dist(l,treelist):
     return [dist, garbage]
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
-def score_quintet(S,l, treelist):
-    quintet_tree = S.retain_taxa_with_labels(l)
+def basic_score_quintet(S,l, treelist):
+    T = dendropy.Tree(S)
+    quintet_tree = T.retain_taxa_with_labels(l)
     quintet_tree.ladderize(ascending=False)
     rooted_shape_str = quintet_tree.as_newick_string()
     rooted_shape = ''
@@ -106,3 +108,55 @@ def score_quintet(S,l, treelist):
         print 'error: quintet topology not in list'
     return score
 
+#score_quintet takes a rooted quintet tree Q as input-is ladderized output of get_rooted_quintet
+def score_quintet(Q,l, treelist):
+    rooted_shape_str = Q.as_newick_string()
+    rooted_shape = ''
+    y = ['(', ')', ',']
+    for i in range(len(rooted_shape_str)):
+        if rooted_shape_str[i] in y:
+            rooted_shape = rooted_shape + rooted_shape_str[i]
+    shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = get_dist(l, treelist)[0].values() 
+    scorefuncs= [inv51, inv52, inv53]
+    if rooted_shape in shapes:
+        score_fucntion = scorefuncs[shapes.index(rooted_shape)]
+        score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    else:
+        print 'error: quintet topology not in list'
+    return score
+
+#S is unrooted Astral tree, l is list of five taxa labels from S, i is the index of edge we want to root at in set 2n-3
+def get_rooted_quintet(S,l,i):
+    T = dendropy.Tree(S)
+    edgelist = [e for e in T.postorder_edge_iter()]
+    root_edge = edgelist[i]
+    T.reroot_at_edge(root_edge)
+    T.retain_taxa_with_labels(l)
+    T.ladderize(ascending=False)
+    return T
+
+#need to fix score_quintet function 'pipleline'
+def total_quintet_score(S,i,treelist):
+    T = dendropy.Tree(S)  
+    L = [n.get_node_str() for n in T.leaf_iter()]
+    Q1 = list(itertools.combinations(L,5))  
+    Q = [list(Q1[k]) for k in range(len(Q1))]
+    Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
+    scorelist = []
+    for j in range(len(Qtreeslist)):
+        scorelist.append(score_quintet(Qtreeslist[j], Q[j],treelist))
+    totalscore = sum(scorelist)
+    
+
+def find_best_edge_by_total_quintet_score(S,treelist):
+    T = dendropy.Tree(S) 
+    Scores = [total_quintet_score(S,j,treelist) for j in range(len((S.leaf_nodes())) - 3)] 
+    best_edge = Scores.index(min(Scores))
+    edgelist = [e for e in T.postorder_edge_iter()]
+    T.reroot_at_edge(best_edge)
+    return T
+
+
+    
+    
