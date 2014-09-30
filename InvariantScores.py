@@ -1,5 +1,6 @@
 import dendropy
 import itertools
+import collections
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
 
@@ -56,33 +57,37 @@ def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
 def dist_counter(l,listofgenetrees):
     M = listofgenetrees.taxon_set
     t1 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[1]+'),' +l[2]+ ',(' +l[3]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M) 
-    t2 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[1]+'),' +l[3]+ ',(' +l[2]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t3 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[1]+'),' +l[4]+ ',(' +l[2]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
-    t4 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[2]+'),' +l[1]+ ',(' +l[3]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t5 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[2]+'),' +l[3]+ ',(' +l[1]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t6 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[2]+'),' +l[4]+ ',(' +l[1]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
-    t7 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[3]+'),' +l[1]+ ',(' +l[2]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t8 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[3]+'),' +l[2]+ ',(' +l[1]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t9 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[3]+'),' +l[4]+ ',(' +l[1]+ ',' +l[2]+ '))', schema = 'newick', taxon_set = M)
-    t10 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[4]+'),' +l[1]+ ',(' +l[2]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
-    t11 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[4]+'),' +l[2]+ ',(' +l[1]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
-    t12 = dendropy.tree.get_from_string('((' +l[0]+ ',' +l[4]+'),' +l[3]+ ',(' +l[1]+ ',' +l[2]+ '))', schema = 'newick', taxon_set = M)
-    t13 = dendropy.tree.get_from_string('((' +l[1]+ ',' +l[2]+'),' +l[0]+ ',(' +l[3]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t14 = dendropy.tree.get_from_string('((' +l[1]+ ',' +l[3]+'),' +l[0]+ ',(' +l[2]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
-    t15 = dendropy.tree.get_from_string('((' +l[1]+ ',' +l[4]+'),' +l[0]+ ',(' +l[2]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
-    counter = {t1:0, t2:0, t3:0, t4:0, t5:0, t6:0,t7:0,t8:0, t9:0, t10:0, t11:0, t12:0, t13:0, t14:0, t15:0}
-    return counter
+    t2 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[1]+'),' +l[3]+ ',(' +l[2]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t3 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[1]+'),' +l[4]+ ',(' +l[2]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
+    t4 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[2]+'),' +l[1]+ ',(' +l[3]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t5 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[2]+'),' +l[3]+ ',(' +l[1]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t6 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[2]+'),' +l[4]+ ',(' +l[1]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
+    t7 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[3]+'),' +l[1]+ ',(' +l[2]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t8 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[3]+'),' +l[2]+ ',(' +l[1]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t9 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[3]+'),' +l[4]+ ',(' +l[1]+ ',' +l[2]+ '))', schema = 'newick', taxon_set = M)
+    t10 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[4]+'),' +l[1]+ ',(' +l[2]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
+    t11 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[4]+'),' +l[2]+ ',(' +l[1]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
+    t12 = dendropy.Tree.get_from_string('((' +l[0]+ ',' +l[4]+'),' +l[3]+ ',(' +l[1]+ ',' +l[2]+ '))', schema = 'newick', taxon_set = M)
+    t13 = dendropy.Tree.get_from_string('((' +l[1]+ ',' +l[2]+'),' +l[0]+ ',(' +l[3]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t14 = dendropy.Tree.get_from_string('((' +l[1]+ ',' +l[3]+'),' +l[0]+ ',(' +l[2]+ ',' +l[4]+ '))', schema = 'newick', taxon_set = M)
+    t15 = dendropy.Tree.get_from_string('((' +l[1]+ ',' +l[4]+'),' +l[0]+ ',(' +l[2]+ ',' +l[3]+ '))', schema = 'newick', taxon_set = M)
+    counter1 = [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15]
+    counter2 = [0 for i in range(15)]
+    return [counter1, counter2]
 
 # I should merge this next with dist_counter after I test them both
-def get_dist(l,treelist):
+def get_dist(l,inputtreelist):
+    treelist = dendropy.TreeList(inputtreelist)
     dist = dist_counter(l, treelist)
+    garbage = []
     for i in range(len(treelist)):
-        smalltree = treelist[i].retain_taxa_with_labels(l)
-        trace = [smalltree.symmetric_difference(dist.keys()[j]) for j in range(15)]
+        smalltree = dendropy.Tree(treelist[i])
+        smalltree.retain_taxa_with_labels(l)
+        trace = [smalltree.symmetric_difference(dist[0][j]) for j in range(15)]
         if trace.count(0) > 1:
             garbage.append(['error: too many zeroes', smalltree, treelist[i]])
         elif 0 in trace:
-            dist[trace.index(0)] = dist[trace.index(0)] + 1
+            dist[1][trace.index(0)] = dist[1][trace.index(0)] + 1
         else:
             garbage.append([smalltree, treelist[i]])
     return [dist, garbage]
@@ -90,19 +95,20 @@ def get_dist(l,treelist):
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 def basic_score_quintet(S,l, treelist):
     T = dendropy.Tree(S)
-    quintet_tree = T.retain_taxa_with_labels(l)
-    quintet_tree.ladderize(ascending=False)
-    rooted_shape_str = quintet_tree.as_newick_string()
+    T.retain_taxa_with_labels(l)
+    T.ladderize(ascending=False)
+    rooted_shape_str = T.as_newick_string()
     rooted_shape = ''
     y = ['(', ')', ',']
     for i in range(len(rooted_shape_str)):
         if rooted_shape_str[i] in y:
             rooted_shape = rooted_shape + rooted_shape_str[i]
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
-    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = get_dist(l, treelist)[0].values() 
+    U = get_dist(l,treelist)
+    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     scorefuncs= [inv51, inv52, inv53]
     if rooted_shape in shapes:
-        score_fucntion = scorefuncs[shapes.index(rooted_shape)]
+        score_function = scorefuncs[shapes.index(rooted_shape)]
         score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
     else:
         print 'error: quintet topology not in list'
@@ -117,10 +123,11 @@ def score_quintet(Q,l, treelist):
         if rooted_shape_str[i] in y:
             rooted_shape = rooted_shape + rooted_shape_str[i]
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
-    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = get_dist(l, treelist)[0].values() 
+    U = get_dist(l,treelist)
+    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1]
     scorefuncs= [inv51, inv52, inv53]
     if rooted_shape in shapes:
-        score_fucntion = scorefuncs[shapes.index(rooted_shape)]
+        score_function = scorefuncs[shapes.index(rooted_shape)]
         score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
     else:
         print 'error: quintet topology not in list'
@@ -147,6 +154,7 @@ def total_quintet_score(S,i,treelist):
     for j in range(len(Qtreeslist)):
         scorelist.append(score_quintet(Qtreeslist[j], Q[j],treelist))
     totalscore = sum(scorelist)
+    return totalscore
     
 
 def find_best_edge_by_total_quintet_score(S,treelist):
@@ -154,7 +162,7 @@ def find_best_edge_by_total_quintet_score(S,treelist):
     Scores = [total_quintet_score(S,j,treelist) for j in range(len((S.leaf_nodes())) - 3)] 
     best_edge = Scores.index(min(Scores))
     edgelist = [e for e in T.postorder_edge_iter()]
-    T.reroot_at_edge(best_edge)
+    T.reroot_at_edge(edgelist[best_edge])
     return T
 
 
