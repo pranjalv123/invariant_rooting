@@ -76,8 +76,8 @@ def dist_counter(l,listofgenetrees):
     return [counter1, counter2]
 
 # I should merge this next with dist_counter after I test them both
-def get_dist(l,inputtreelist):
-    treelist = dendropy.TreeList(inputtreelist)
+def get_dist(l,treelist):
+    #treelist = dendropy.TreeList(inputtreelist)
     dist = dist_counter(l, treelist)
     garbage = []
     for i in range(len(treelist)):
@@ -146,10 +146,13 @@ def get_rooted_quintet(S,l,i):
 #need to fix score_quintet function 'pipleline'
 def total_quintet_score(S,i,treelist):
     T = dendropy.Tree(S)  
-    L = [n.get_node_str() for n in T.leaf_iter()]
+    L = [n.get_node_str() for n in T.leaf_iter()
+    print "leaf set of S is" + str(l)
     Q1 = list(itertools.combinations(L,5))  
     Q = [list(Q1[k]) for k in range(len(Q1))]
+    print "list of all quintets is" + str(Q)
     Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
+    print "length of all rooted quintets from edge" + str(i) + "is" + str(len(Qtreeslist))
     scorelist = []
     for j in range(len(Qtreeslist)):
         scorelist.append(score_quintet(Qtreeslist[j], Q[j],treelist))
