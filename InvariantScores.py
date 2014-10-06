@@ -1,9 +1,11 @@
 import dendropy
 import itertools
 import collections
+import pprint
+from dendropy import treecalc
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
-
+#pp = pprint.PrettyPrinter(indent=4)
 #inv3 gets the score for 3-taxon trees or 4-taxon trees.  Use for u1 the
 #probability that the gene tree matches the species tree, then u2, u3 those that don't
 def inv3(u1, u2, u3):
@@ -79,17 +81,21 @@ def dist_counter(l,listofgenetrees):
 def get_dist(l,treelist):
     #treelist = dendropy.TreeList(inputtreelist)
     dist = dist_counter(l, treelist)
+    #pp.pprint(dist)
+    viztrees = [dist[0][k].as_string("newick") for k in range(15)]
+    print viztrees
     garbage = []
     for i in range(len(treelist)):
         smalltree = dendropy.Tree(treelist[i])
         smalltree.retain_taxa_with_labels(l)
-        trace = [smalltree.symmetric_difference(dist[0][j]) for j in range(15)]
+        smalltree.update_splits()
+        trace = [dendropy.treecalc.symmetric_difference(smalltree,dist[0][j]) for j in range(15)]
         if trace.count(0) > 1:
-            garbage.append(['error: too many zeroes', smalltree, treelist[i]])
+            garbage.append(['error: too many zeroes', smalltree.as_string("newick"), smalltree,  treelist[i], trace])
         elif 0 in trace:
             dist[1][trace.index(0)] = dist[1][trace.index(0)] + 1
         else:
-            garbage.append([smalltree, treelist[i]])
+            garbage.append([smalltree.as_newick_string(), treelist[i].as_newick_string(), min(trace)])
     return [dist, garbage]
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
@@ -146,13 +152,10 @@ def get_rooted_quintet(S,l,i):
 #need to fix score_quintet function 'pipleline'
 def total_quintet_score(S,i,treelist):
     T = dendropy.Tree(S)  
-    L = [n.get_node_str() for n in T.leaf_iter()
-    print "leaf set of S is" + str(l)
+    L = [n.get_node_str() for n in T.leaf_iter()]
     Q1 = list(itertools.combinations(L,5))  
     Q = [list(Q1[k]) for k in range(len(Q1))]
-    print "list of all quintets is" + str(Q)
     Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
-    print "length of all rooted quintets from edge" + str(i) + "is" + str(len(Qtreeslist))
     scorelist = []
     for j in range(len(Qtreeslist)):
         scorelist.append(score_quintet(Qtreeslist[j], Q[j],treelist))
