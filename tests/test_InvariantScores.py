@@ -68,9 +68,18 @@ class TestUnrootedDistributions(unittest.TestCase):
         self.assertEqual(score,0) 
         self.assertEqual(W,['((((D,E),C),B),A)', '((((D,E),C),A),B)', '(((D,E),C),(A,B))', '(((A,B),(D,E)),C)', '(((A,B),C),(D,E))', '((((A,B),C),E),D)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)'])
         self.assertEqual(V,['((((D,E),C),B),A)', '((((D,E),C),A),B)', '(((D,E),C),(A,B))', '(((A,B),(D,E)),C)', '(((A,B),C),(D,E))', '((((A,B),C),E),D)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)', '((((A,B),C),D),E)'])
-
-
-    #def test_inv52(self):
+    
+#def test_inv52(self):
         #u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 
+
+class TestQuartetStuff(unittest.TestCase):
+    def testQuartetDict(self):
+        info = InvariantScores.QuartetsInfo("output2.txt")
+        d = info.quartet_dict()
+        self.assertEqual(d['((a,b),(c,d));'], 2)
+        self.assertEqual(d['((a,b),(c,e));'], 2)
+        self.assertEqual(d['((a,b),(d,e));'], 3)
+
 if __name__ == '__main__':
-    unittest.main()
+    unittest.main(
+)

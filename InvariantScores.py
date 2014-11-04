@@ -82,8 +82,8 @@ def get_dist(l,treelist):
     #treelist = dendropy.TreeList(inputtreelist)
     dist = dist_counter(l, treelist)
     #pp.pprint(dist)
-    viztrees = [dist[0][k].as_string("newick") for k in range(15)]
-    print viztrees
+    #viztrees = [dist[0][k].as_string("newick") for k in range(15)]
+    #print viztrees
     garbage = []
     for i in range(len(treelist)):
         smalltree = dendropy.Tree(treelist[i])
@@ -152,7 +152,7 @@ def get_rooted_quintet(S,l,i):
 #need to fix score_quintet function 'pipleline'
 def total_quintet_score(S,i,treelist):
     T = dendropy.Tree(S)  
-    L = [n.get_node_str() for n in T.leaf_iter()]
+    L = [n.taxon.label for n in T.leaf_nodes()]
     Q1 = list(itertools.combinations(L,5))  
     Q = [list(Q1[k]) for k in range(len(Q1))]
     Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
@@ -165,12 +165,29 @@ def total_quintet_score(S,i,treelist):
 
 def find_best_edge_by_total_quintet_score(S,treelist):
     T = dendropy.Tree(S) 
-    Scores = [total_quintet_score(S,j,treelist) for j in range(len((S.leaf_nodes())) - 3)] 
-    best_edge = Scores.index(min(Scores))
     edgelist = [e for e in T.postorder_edge_iter()]
+    numedges = len(edgelist)
+    Scores = [total_quintet_score(S,j,treelist) for j in range(numedges)] 
+    best_edge = Scores.index(min(Scores))
     T.reroot_at_edge(edgelist[best_edge])
     return T
 
+#quartetsfile is a string name of file, file must be in working directory
+class QuartetsInfo:
+    def __init__(self,quartetsfile):
+        self.filename = quartetsfile
+        #self.quartet_dict = {}
+        #with open(quartetsfile) as f:
+            #for line in f:
+                #(key,val) = line.split()
+                #self.quartet_dict[key] = int(val)
+    def quartet_dict(self):
+        d = {}
+        with open(self.filename) as f:
+            for line in f:
+                (key,val) = line.split()
+                d[key] = int(val)
+        return d
 
-    
-    
+
+
