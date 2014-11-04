@@ -189,5 +189,16 @@ class QuartetsInfo:
                 d[key] = int(val)
         return d
 
+#L is a list of four labels that are strings and the order matters
+    def get_freqs(self,L):
+        s = self.quartet_dict()
+        q = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));']
+        u = [0,0,0]
+        for i in range(3):
+            if q[i] in s:
+                u[i] = s[q[i]]
+        return u
+        
+
 
 

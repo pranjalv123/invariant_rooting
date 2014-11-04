@@ -80,6 +80,12 @@ class TestQuartetStuff(unittest.TestCase):
         self.assertEqual(d['((a,b),(c,e));'], 2)
         self.assertEqual(d['((a,b),(d,e));'], 3)
 
+    def test2QuartetDict(self):
+        info = InvariantScores.QuartetsInfo("output2.txt")
+        d = info.quartet_dict()
+        e = info.get_freqs(['a', 'b', 'c', 'd'])
+        self.assertEqual(e, [2, 1, 0])
+ 
 if __name__ == '__main__':
     unittest.main(
 )
