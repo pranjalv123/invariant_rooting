@@ -232,14 +232,14 @@ class QuartetsInfo:
     def score_double(self,D1,D2):
         g = self.quartet_dict()
         h = self.quartet_labels_dict()
-        print g
-        print h
+        #print g
+        #print h
         score = 0
         for k in g:
             if '(' + D1 + ',' + D2 + ')' in k:
-                print k
+                #print k
                 newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2))
-                print newscore
+                #print newscore
                 score = score + newscore
         return score
 
