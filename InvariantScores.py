@@ -2,6 +2,7 @@ import dendropy
 import itertools
 import collections
 import pprint
+import string
 from dendropy import treecalc
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
@@ -189,7 +190,7 @@ class QuartetsInfo:
                 d[key] = int(val)
         return d
 
-#L is a list of four labels that are strings and the order matters
+#L is a list of four labels that are strings-alphabetical order required
     def get_freqs(self,L):
         s = self.quartet_dict()
         q = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));']
@@ -199,6 +200,47 @@ class QuartetsInfo:
                 u[i] = s[q[i]]
         return u
         
+#L same as get_freqs, i,j are indices of L specified as cherry of interest
+    def quartet_score(self,L,i,j):
+        f1, f2, f3 = self.get_freqs(L)
+        if [i,j] in [[0,1], [2,3]]:
+            u1, u2, u3 = f1, f2, f3
+        elif [i,j] in [[0,2], [1,3]]:
+            u1, u2, u3 = f2, f1, f3
+        elif [i,j] in [[0,3], [1,2]]:
+            u1, u2, u3 = f3, f1, f2
+        else:
+            print "problem with quartet score input indices"
+        a12 = min(u1-u2,0)
+        a13 = min(u1-u3,0)
+        score = abs(u2-u3) + (-1)*a12 + (-1)*a13
+        return score
 
+    def quartet_labels_dict(self):
+        g = self.quartet_dict()
+        h = {}
+        gkeys = g.keys()
+        for i in range(len(gkeys)):
+            keycopy = gkeys[i]
+            labellist = keycopy.split(',')
+            for j in range(4):
+                labellist[j] = labellist[j].translate(None,string.punctuation)        
+            h[gkeys[i]] = labellist
+        return h
+
+#D1,D2  are two taxa labels as strings in alphabetical order
+    def score_double(self,D1,D2):
+        g = self.quartet_dict()
+        h = self.quartet_labels_dict()
+        print g
+        print h
+        score = 0
+        for k in g:
+            if '(' + D1 + ',' + D2 + ')' in k:
+                print k
+                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2))
+                print newscore
+                score = score + newscore
+        return score
 
 

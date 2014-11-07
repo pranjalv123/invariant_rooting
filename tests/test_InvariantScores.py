@@ -84,8 +84,46 @@ class TestQuartetStuff(unittest.TestCase):
         info = InvariantScores.QuartetsInfo("output2.txt")
         d = info.quartet_dict()
         e = info.get_freqs(['a', 'b', 'c', 'd'])
+        f = info.get_freqs(['b', 'c', 'd', 'e'])
         self.assertEqual(e, [2, 1, 0])
+        self.assertEqual(f, [2, 0, 1])
+
+    def testQuartetScores(self):
+        info = InvariantScores.QuartetsInfo("output2.txt")
+        d = info.quartet_dict()
+        e = info.get_freqs(['a', 'b', 'c', 'd'])
+        f = info.get_freqs(['b', 'c', 'd', 'e'])
+        escore = info.quartet_score(['a', 'b', 'c', 'd'],0,1)
+        escore2 = info.quartet_score(['a', 'b', 'c', 'd'],2,3)
+        escore3 = info.quartet_score(['a', 'b', 'c', 'd'],0,3)
+        fscore = info.quartet_score(['b', 'c', 'd', 'e'],0,1)
+        fscore2 = info.quartet_score(['b', 'c', 'd', 'e'],0,2)
+        gscore = info.quartet_score(['a','b','c','e'],0,1)
+        hscore = info.quartet_score(['a','b','d','e'],0,1)
+        self.assertEqual(escore,1)
+        self.assertEqual(fscore,1)
+        self.assertEqual(fscore2,4) 
+        self.assertEqual(escore2,1) 
+        self.assertEqual(escore3,4)
+        self.assertEqual(gscore,1) 
+        self.assertEqual(hscore,0)
  
+class TestQuartetLabelsDict(unittest.TestCase):
+    def testlabelsdict(self):
+        info = InvariantScores.QuartetsInfo("output2.txt")
+        d = info.quartet_dict()
+        g = info.quartet_labels_dict()
+        self.assertEqual(g['((a,b),(c,d));'], ['a','b','c','d'])
+        self.assertEqual(g['((a,b),(c,e));'], ['a','b','c','e'])
+        self.assertEqual(g['((a,b),(d,e));'], ['a','b','d','e'])
+
+        
+class TestPenaltyFunctions(unittest.TestCase):
+    def testPenaltyDoubleton(self):
+        info = InvariantScores.QuartetsInfo("output2.txt")
+        fab = info.score_double('a', 'b')
+        self.assertEqual(fab,2)
+
 if __name__ == '__main__':
     unittest.main(
 )
