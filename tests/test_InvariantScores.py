@@ -124,6 +124,13 @@ class TestPenaltyFunctions(unittest.TestCase):
         fab = info.score_double('a', 'b')
         self.assertEqual(fab,2)
 
+    def testTreeScore(self):
+        info = InvariantScores.QuartetsInfo("output2.txt") 
+        treescore = info.score_tree("lonetreequartets")
+        self.assertEqual(treescore,78)
+
+
+        
 if __name__ == '__main__':
     unittest.main(
 )

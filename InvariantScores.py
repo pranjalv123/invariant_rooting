@@ -243,4 +243,26 @@ class QuartetsInfo:
                 score = score + newscore
         return score
 
+    def score_tree(self,treequartetsfile):
+        treelist = []
+        with open(treequartetsfile) as f:
+            for line in f:
+                (keygen,val) = line.split()
+                labellist = keygen.split(',')
+                for j in range(4):
+                    labellist[j] = labellist[j].translate(None,string.punctuation)        
+                treelist.append(labellist)
+        print treelist
+        score = 0
+        for k in range(len(treelist)):
+                newscore = self.quartet_score(treelist[k],0,1)
+                print newscore
+                score = score + newscore
+        return score
+
+            
+
+        
+        
+        
 

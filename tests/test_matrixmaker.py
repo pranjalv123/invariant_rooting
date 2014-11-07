@@ -39,6 +39,7 @@ class TestmatrixMaker(unittest.TestCase):
         self.assertEqual(M.shape, (3,3))
         self.assertEqual(M[2,0], 1)
         self.assertEqual(M[1,0], 0)
-  
-        
-    
+        self.assertEqual(M[2,1], 1)
+
+#if __name__ == '__main__':
+    #unittest.main()
