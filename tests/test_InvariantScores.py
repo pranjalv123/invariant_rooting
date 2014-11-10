@@ -84,9 +84,15 @@ class TestQuartetStuff(unittest.TestCase):
         info = InvariantScores.QuartetsInfo("output2.txt")
         d = info.quartet_dict()
         e = info.get_freqs(['a', 'b', 'c', 'd'])
-        f = info.get_freqs(['b', 'c', 'd', 'e'])
+        e1 = info.get_freqs(['a', 'b', 'c', 'e'])
+        e2 = info.get_freqs(['a', 'b', 'd', 'e'])
+        e3 = info.get_freqs(['a', 'c', 'd', 'e'])
+        e4 = info.get_freqs(['b', 'c', 'd', 'e'])
         self.assertEqual(e, [2, 1, 0])
-        self.assertEqual(f, [2, 0, 1])
+        self.assertEqual(e1, [2, 1, 0])
+        self.assertEqual(e2, [3, 0, 0])
+        self.assertEqual(e3, [2, 0, 1])
+        self.assertEqual(e4, [2, 0, 1])
 
     def testQuartetScores(self):
         info = InvariantScores.QuartetsInfo("output2.txt")
@@ -127,7 +133,9 @@ class TestPenaltyFunctions(unittest.TestCase):
     def testTreeScore(self):
         info = InvariantScores.QuartetsInfo("output2.txt") 
         treescore = info.score_tree("lonetreequartets")
-        self.assertEqual(treescore,78)
+        treescore2 = info.score_tree("lonetree2quartets")
+        self.assertEqual(treescore,4)
+        self.assertEqual(treescore2,10)
 
 
         
