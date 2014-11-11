@@ -1,6 +1,7 @@
 import unittest
 import InvariantScores
 import dendropy
+import matrixmaker
 
 class TestInvariantScores3(unittest.TestCase):
     def test_inv3(self):
@@ -138,7 +139,9 @@ class TestPenaltyFunctions(unittest.TestCase):
         self.assertEqual(treescore2,10)
 
 
-        
+#class TestMatrixScoring(unittest.TestCase):
+    #def testScoreDouble(self):i
+
 if __name__ == '__main__':
-    unittest.main(
+     unittest.main(
 )

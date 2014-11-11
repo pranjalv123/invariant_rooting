@@ -4,6 +4,8 @@ import collections
 import pprint
 import string
 from dendropy import treecalc
+import matrixmaker
+
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
 #pp = pprint.PrettyPrinter(indent=4)

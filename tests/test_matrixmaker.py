@@ -41,5 +41,24 @@ class TestmatrixMaker(unittest.TestCase):
         self.assertEqual(M[1,0], 0)
         self.assertEqual(M[2,1], 1)
 
+    def test2_make_matrix(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
+        M = matrix_maker.matrix()
+        self.assertEqual(M.shape, (20,20))
+        self.assertEqual(M[4,5], 0)
+        self.assertEqual(M[5,0], 1)
+        self.assertEqual(M[5,1], 1)
+        self.assertEqual(M[16,5], 1)
+        self.assertEqual(M[16,6], 1)
+        self.assertEqual(M[16,7], 1)
+        self.assertEqual(M[16,8], 0)
+        self.assertEqual(M[16,9], 1)
+        self.assertEqual(M[16,12],1)
+        self.assertEqual(M[16,13],0)
+
+
+
 #if __name__ == '__main__':
     #unittest.main()
