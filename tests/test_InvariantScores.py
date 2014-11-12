@@ -129,7 +129,19 @@ class TestPenaltyFunctions(unittest.TestCase):
     def testPenaltyDoubleton(self):
         info = InvariantScores.QuartetsInfo("output2.txt")
         fab = info.score_double('a', 'b')
+        fac = info.score_double('a', 'c')
+        fad = info.score_double('a', 'd')
+        fae = info.score_double('a', 'e')
+        fbc = info.score_double('b', 'c')
+        fcd = info.score_double('c', 'd')
+        fce = info.score_double('c', 'e')
         self.assertEqual(fab,2)
+        self.assertEqual(fac,7)
+        self.assertEqual(fad,0)
+        self.assertEqual(fae,0)
+        self.assertEqual(fbc,1)
+        self.assertEqual(fcd,1)
+        self.assertEqual(fce,1)
 
     def testTreeScore(self):
         info = InvariantScores.QuartetsInfo("output2.txt") 
@@ -139,8 +151,33 @@ class TestPenaltyFunctions(unittest.TestCase):
         self.assertEqual(treescore2,10)
 
 
-#class TestMatrixScoring(unittest.TestCase):
-    #def testScoreDouble(self):i
+class TestMatrixScoring(unittest.TestCase):
+    def testScoreBig(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
+        M = matrix_maker.matrix()
+
+    def testScoreDoubles(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e']]
+        matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
+        M = matrix_maker.matrix()
+        info = InvariantScores.QuartetsInfo("output2.txt")
+        self.assertEqual(M.shape, (12,12))
+        SM = InvariantScores.ScoredMatrix(labels,setlist,"output2.txt").scored_matrix()
+        #SM = ScoredClass.scored_matrix()
+        self.assertEqual(SM[5,0], 2)
+        self.assertEqual(SM[5.1], 2)
+        self.assertEqual(SM[6,0], 7)
+        self.assertEqual(SM[6,2], 7)
+        self.assertEqual(SM[8,0], 0)
+        self.assertEqual(SM[8,4], 0)
+        self.assertEqual(SM[11,2], 1)
+        self.assertEqual(SM[11,4], 1)
+ 
+        
+
 
 if __name__ == '__main__':
      unittest.main(

@@ -262,9 +262,24 @@ class QuartetsInfo:
                 score = score + newscore
         return score
 
-            
+#matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)
+class ScoredMatrix:
+    def __init__(self,labels,setlist,quartetsfile):
+        self.start_matrix = matrixmaker.MatrixMaker(labels,setlist)
+        self.quartetsfile = quartetsfile
+        self.labels = self.start_matrix.labels
+        self.setlist = self.start_matrix.setlist
+        self.quartetsinfo = QuartetsInfo(quartetsfile)
+        self.matrixy = self.start_matrix.matrix()
+        #self.quartet_dict = {}
 
+    def scored_matrix(self):
+        K  = self.matrixy
+        L = self.setlist
+        for i in range(len(L)): 
+            if len(L[i]) == 2:
+               for j in range(i-1):
+                    if K[i, j] == 1:
+                        K[i,j] = self.quartetsinfo.score_double(L[i][0], L[i][1])
+        return K            
         
-        
-        
-
