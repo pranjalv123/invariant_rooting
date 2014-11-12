@@ -157,6 +157,7 @@ class TestMatrixScoring(unittest.TestCase):
         setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
         matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
         M = matrix_maker.matrix()
+        self.assertEqual(M.shape, (20,20))
 
     def testScoreDoubles(self):
         labels = ['a','b','c','d','e']
@@ -175,9 +176,26 @@ class TestMatrixScoring(unittest.TestCase):
         self.assertEqual(SM[8,4], 0)
         self.assertEqual(SM[11,2], 1)
         self.assertEqual(SM[11,4], 1)
- 
-        
 
+class TestSubsetPenaltyScores(unittest.TestCase):
+    def testPenalty1(self):        
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        scoring = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        S1 = scoring.penalty_score(['a'],['b'])
+        S2 = scoring.penalty_score(['a', 'b'], ['c'])
+        self.assertEqual(S1,2)
+        self.assertEqual(S2,2)
+        
+class TestClassCompositions(unittest.TestCase):
+    def testSubsetPenaltiesinstance(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        M = matrixmaker.MatrixMaker(labels,setlist)
+        Q = InvariantScores.QuartetsInfo('output2.txt')
+        self.assertEqual(A.matrix[0,4], M.matrix()[0,4])
+        self.assertEqual(Q.quartet_dict(), A.quartetsinfo.quartet_dict())
 
 if __name__ == '__main__':
      unittest.main(

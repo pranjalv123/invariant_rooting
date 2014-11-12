@@ -245,6 +245,8 @@ class QuartetsInfo:
                 score = score + newscore
         return score
 
+    #def penalty_score(self, subset1, subset2):
+        
     def score_tree(self,treequartetsfile):
         treelist = []
         with open(treequartetsfile) as f:
@@ -262,6 +264,11 @@ class QuartetsInfo:
                 score = score + newscore
         return score
 
+class SubsetPenalties:
+    def __init__(self,labels,setlist,quartetsfile):
+        self.quartetsinfo = QuartetsInfo(quartetsfile)
+        self.matrix = matrixmaker.MatrixMaker(labels,setlist).matrix()
+    
 #matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)
 class ScoredMatrix:
     def __init__(self,labels,setlist,quartetsfile):
