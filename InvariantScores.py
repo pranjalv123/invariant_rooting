@@ -267,8 +267,46 @@ class QuartetsInfo:
 class SubsetPenalties:
     def __init__(self,labels,setlist,quartetsfile):
         self.quartetsinfo = QuartetsInfo(quartetsfile)
-        self.matrix = matrixmaker.MatrixMaker(labels,setlist).matrix()
-    
+        self.matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
+        self.matrix = self.matrix_maker.matrix()
+        self.labels = self.matrix_maker.labels
+        
+    def add_quartets(self,set1,set2):
+        stuntlabels = self.labels
+        for s in set1:
+            stuntlabels.remove(s)
+        for t in set2:
+            stuntlabels.remove(t)
+        A = itertools.combinations(stuntlabels,2)
+        AA = list(A)
+        SminusApairs = [list(AA[j]) for j in range(len(AA))]
+        A1A2 = []
+        for k in range(len(set1)):
+            for l in range(len(set2)):
+                A1A2.append([set1[k],set2[l]])
+        AQ = []
+        for m in range(len(A1A2)):
+            for n in range(len(SminusApairs)):
+                AQ.append(A1A2[m] + SminusApairs[n])
+        #print AQ
+        return AQ
+
+    def subtract_quartets(self,set1,set2):
+        a1 = itertools.combinations(set1,2)
+        a2 = itertools.combinations(set2,2)
+        aa1 = list(a1)
+        aa2 = list(a2)
+        A1 = [list(aa1[i]) for i in range(len(aa1))]
+        A2 = [list(aa2[j]) for j in range(len(aa2))]
+        SQ = []
+        for m in range(len(A1)):
+            for n in range(len(A2)):
+                SQ.append(A1[m] + A2[n])
+        #print SQ
+        return SQ
+
+            
+ 
 #matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)
 class ScoredMatrix:
     def __init__(self,labels,setlist,quartetsfile):
