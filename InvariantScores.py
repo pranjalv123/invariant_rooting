@@ -272,11 +272,17 @@ class SubsetPenalties:
         self.labels = self.matrix_maker.labels
         
     def add_quartets(self,set1,set2):
-        stuntlabels = self.labels
-        for s in set1:
+        stuntlabels = []
+        for i in range(len(self.labels)):
+            stuntlabels.append(self.labels[i])
+        compl = set1 + set2
+        #print stuntlabels, compl
+        for s in compl:
             stuntlabels.remove(s)
-        for t in set2:
-            stuntlabels.remove(t)
+            #print stuntlabels
+        #for t in set2:
+            #stuntlabels.remove(t)
+            #print stuntlabels
         A = itertools.combinations(stuntlabels,2)
         AA = list(A)
         SminusApairs = [list(AA[j]) for j in range(len(AA))]
@@ -287,9 +293,9 @@ class SubsetPenalties:
         AQ = []
         for m in range(len(A1A2)):
             for n in range(len(SminusApairs)):
-                #tmp = A1A2[m] + SminusApairs[n]
-                #tmp.sort()
-                AQ.append(A1A2[m] + SminusApairs[n])
+                tmp = A1A2[m] + SminusApairs[n]
+                tmp.sort()
+                AQ.append([tmp, tmp.index(A1A2[m][0]), tmp.index(A1A2[m][1])])
         #print AQ
         return AQ
 
@@ -303,12 +309,28 @@ class SubsetPenalties:
         SQ = []
         for m in range(len(A1)):
             for n in range(len(A2)):
-                #tmp = A1[m] + A2[n]
-                #tmp.sort()
-                SQ.append(A1[m] + A2[n])
+                tmp = A1[m] + A2[n]
+                tmp.sort()
+                SQ.append([tmp,tmp.index(A1[m][0]), tmp.index(A1[m][1])])
         #print SQ
         return SQ
 
+#need to enter score1, score2 for set1, set2 now: later can make this flexible? sets of size 1 and 2 are 0 and fixed. 
+    def penalty_score(self,set1,set2,score1,score2):
+        g = self.quartetsinfo.quartet_dict()
+        h = self.quartetsinfo.quartet_labels_dict()
+        labs = self.labels
+        #print labs, set1, set2
+        AQ = self.add_quartets(set1,set2)
+        #print AQ
+        #SQ = self.subtract_quartets(set1,set2)
+        score = score1 + score2
+        for i in range(len(AQ)):
+            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2])
+            #print score
+        #for j in range(len(SQ)): 
+            #score = score-self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2])
+        return score
             
  
 #matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)

@@ -106,6 +106,7 @@ class TestQuartetStuff(unittest.TestCase):
         fscore = info.quartet_score(['b', 'c', 'd', 'e'],0,1)
         fscore2 = info.quartet_score(['b', 'c', 'd', 'e'],0,2)
         gscore = info.quartet_score(['a','b','c','e'],0,1)
+        acdescore = info.quartet_score(['a','c','d','e'],0,1)
         hscore = info.quartet_score(['a','b','d','e'],0,1)
         self.assertEqual(escore,1)
         self.assertEqual(fscore,1)
@@ -114,6 +115,8 @@ class TestQuartetStuff(unittest.TestCase):
         self.assertEqual(escore3,4)
         self.assertEqual(gscore,1) 
         self.assertEqual(hscore,0)
+        self.assertEqual(acdescore,1)
+
  
 class TestQuartetLabelsDict(unittest.TestCase):
     def testlabelsdict(self):
@@ -183,10 +186,10 @@ class TestSubsetPenaltyScores(unittest.TestCase):
         labels = ['a','b','c','d','e']
         setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
         scoring = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
-        #S1 = scoring.penalty_score(['a'],['b'])
-        #S2 = scoring.penalty_score(['a', 'b'], ['c'])
-        #self.assertEqual(S1,2)
-        #self.assertEqual(S2,2)
+        S1 = scoring.penalty_score(['a'],['b'],0,0)
+        S2 = scoring.penalty_score(['a', 'b'], ['c'],2,0)
+        self.assertEqual(S1,2)
+        self.assertEqual(S2,4)
 
     def testQuartetSets(self):
         labels = ['a','b','c','d','e']
@@ -195,9 +198,9 @@ class TestSubsetPenaltyScores(unittest.TestCase):
         AQ1 = scoring.add_quartets(['a', 'b'], ['c'])
         SQ1 = scoring.subtract_quartets(['a', 'b'], ['c'])
         SQ2 = scoring.subtract_quartets(['a', 'b'], ['c','d'])
-        self.assertEqual(AQ1, [['a','c','d','e'], ['b','c','d','e']])
+        self.assertEqual(AQ1, [[['a','c','d','e'],0,1], [['b','c','d','e'],0,1]])
         self.assertEqual(SQ1, [])
-        self.assertEqual(SQ2, [['a','b','c','d']])
+        self.assertEqual(SQ2, [[['a','b','c','d'],0,1]])
 
 class TestClassCompositions(unittest.TestCase):
     def testSubsetPenaltiesinstance(self):
