@@ -283,7 +283,9 @@ class SubsetPenalties:
         A1A2 = []
         for k in range(len(set1)):
             for l in range(len(set2)):
-                A1A2.append([set1[k],set2[l]])
+                tmp = [set1[k],set2[l]]
+                tmp.sort()
+                A1A2.append(tmp)
         AQ = []
         for m in range(len(A1A2)):
             for n in range(len(SminusApairs)):
