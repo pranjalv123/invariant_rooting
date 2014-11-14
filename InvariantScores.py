@@ -5,6 +5,7 @@ import pprint
 import string
 from dendropy import treecalc
 import matrixmaker
+import numpy as np
 
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
@@ -319,7 +320,7 @@ class SubsetPenalties:
     def penalty_score(self,set1,set2,score1,score2):
         g = self.quartetsinfo.quartet_dict()
         h = self.quartetsinfo.quartet_labels_dict()
-        labs = self.labels
+        #labs = self.labels
         #print labs, set1, set2
         AQ = self.add_quartets(set1,set2)
         #print AQ
@@ -332,26 +333,35 @@ class SubsetPenalties:
         for j in range(len(SQ)): 
             score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2])
         return score
-            
- 
-#matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)
-class ScoredMatrix:
-    def __init__(self,labels,setlist,quartetsfile):
-        self.start_matrix = matrixmaker.MatrixMaker(labels,setlist)
-        self.quartetsfile = quartetsfile
-        self.labels = self.start_matrix.labels
-        self.setlist = self.start_matrix.setlist
-        self.quartetsinfo = QuartetsInfo(quartetsfile)
-        self.matrixy = self.start_matrix.matrix()
-        #self.quartet_dict = {}
 
     def scored_matrix(self):
-        K  = self.matrixy
-        L = self.setlist
-        for i in range(len(L)): 
-            if len(L[i]) == 2:
-               for j in range(i-1):
-                    if K[i, j] == 1:
-                        K[i,j] = self.quartetsinfo.score_double(L[i][0], L[i][1])
-        return K            
+        SM = np.copy(self.matrix)
+        #twos = []
+        #for i in range(len(self.labels)):
+            #if len(self.labels[i] == 2):
+                #twos.append(self.labels[i])
+        return SM
+        
+            
+#This class was not working well, replace with score_matrix function in class SubsetPenalties 
+#matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)
+#class ScoredMatrix:
+    #def __init__(self,labels,setlist,quartetsfile):
+        #self.start_matrix = matrixmaker.MatrixMaker(labels,setlist)
+        #self.quartetsfile = quartetsfile
+        #self.labels = self.start_matrix.labels
+        #self.setlist = self.start_matrix.setlist
+        #self.quartetsinfo = QuartetsInfo(quartetsfile)
+        #self.matrixy = self.start_matrix.matrix()
+        #self.quartet_dict = {}
+
+    #def scored_matrix(self):
+        #K  = self.matrixy
+        #L = self.setlist
+        #for i in range(len(L)): 
+            #if len(L[i]) == 2:
+               #for j in range(i-1):
+                    #if K[i, j] == 1:
+                        #K[i,j] = self.quartetsinfo.score_double(L[i][0], L[i][1])
+        #return K            
         

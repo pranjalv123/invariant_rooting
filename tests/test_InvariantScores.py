@@ -210,6 +210,7 @@ class TestSubsetPenaltyScores(unittest.TestCase):
         self.assertEqual(SQ1, [])
         self.assertEqual(SQ2, [[['a','b','c','d'],0,1]])
 
+#matrix and scored_matrix should NOT be the same.....
 class TestClassCompositions(unittest.TestCase):
     def testSubsetPenaltiesinstance(self):
         labels = ['a','b','c','d','e']
@@ -218,8 +219,11 @@ class TestClassCompositions(unittest.TestCase):
         M = matrixmaker.MatrixMaker(labels,setlist)
         Q = InvariantScores.QuartetsInfo('output2.txt')
         self.assertEqual(A.matrix[0,4], M.matrix()[0,4])
+        self.assertEqual(A.matrix.all(), M.matrix().all())
         self.assertEqual(Q.quartet_dict(), A.quartetsinfo.quartet_dict())
         self.assertEqual(A.labels, M.labels)
+        self.assertEqual(A.matrix.all(), A.scored_matrix().all())
+        #self.assertEqual(A.scored_matrix()[5,0],2) 
     
 
 if __name__ == '__main__':
