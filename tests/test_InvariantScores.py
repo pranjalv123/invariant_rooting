@@ -107,7 +107,9 @@ class TestQuartetStuff(unittest.TestCase):
         fscore2 = info.quartet_score(['b', 'c', 'd', 'e'],0,2)
         gscore = info.quartet_score(['a','b','c','e'],0,1)
         acdescore = info.quartet_score(['a','c','d','e'],0,1)
+        aecdscore = info.quartet_score(['a','c','d','e'],0,3)
         hscore = info.quartet_score(['a','b','d','e'],0,1)
+        becdscore = info.quartet_score(['b', 'c', 'd', 'e'],0,3)
         self.assertEqual(escore,1)
         self.assertEqual(fscore,1)
         self.assertEqual(fscore2,4) 
@@ -116,7 +118,8 @@ class TestQuartetStuff(unittest.TestCase):
         self.assertEqual(gscore,1) 
         self.assertEqual(hscore,0)
         self.assertEqual(acdescore,1)
-
+        self.assertEqual(becdscore,3)
+        self.assertEqual(aecdscore,3)
  
 class TestQuartetLabelsDict(unittest.TestCase):
     def testlabelsdict(self):
@@ -188,8 +191,13 @@ class TestSubsetPenaltyScores(unittest.TestCase):
         scoring = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
         S1 = scoring.penalty_score(['a'],['b'],0,0)
         S2 = scoring.penalty_score(['a', 'b'], ['c'],2,0)
+        S3 = scoring.penalty_score(['a', 'b'], ['c','d'],2,7)
+        S4 = scoring.penalty_score(['c'],['d'],0,0)
         self.assertEqual(S1,2)
         self.assertEqual(S2,4)
+        self.assertEqual(S3,8)
+        self.assertEqual(S4,7)
+        
 
     def testQuartetSets(self):
         labels = ['a','b','c','d','e']

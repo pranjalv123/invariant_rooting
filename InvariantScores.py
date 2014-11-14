@@ -323,13 +323,14 @@ class SubsetPenalties:
         #print labs, set1, set2
         AQ = self.add_quartets(set1,set2)
         #print AQ
-        #SQ = self.subtract_quartets(set1,set2)
+        SQ = self.subtract_quartets(set1,set2)
+        #print SQ
         score = score1 + score2
         for i in range(len(AQ)):
             score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2])
             #print score
-        #for j in range(len(SQ)): 
-            #score = score-self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2])
+        for j in range(len(SQ)): 
+            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2])
         return score
             
  
