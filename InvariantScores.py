@@ -268,6 +268,7 @@ class QuartetsInfo:
 class SubsetPenalties:
     def __init__(self,labels,setlist,quartetsfile):
         self.quartetsinfo = QuartetsInfo(quartetsfile)
+        self.setlist = setlist
         self.matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
         self.matrix = self.matrix_maker.matrix()
         self.labels = self.matrix_maker.labels
@@ -336,10 +337,12 @@ class SubsetPenalties:
 
     def scored_matrix(self):
         SM = np.copy(self.matrix)
-        #twos = []
-        #for i in range(len(self.labels)):
-            #if len(self.labels[i] == 2):
-                #twos.append(self.labels[i])
+        for i in range(len(self.setlist)):
+            if len(self.setlist[i]) == 2:
+                m = self.setlist.index([self.setlist[i][0]])
+                n = self.setlist.index([self.setlist[i][1]])
+                SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+                SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
         return SM
         
             

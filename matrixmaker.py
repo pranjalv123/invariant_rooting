@@ -18,7 +18,7 @@ class MatrixMaker:
     def inclusion(self, set1, set2):
         mask1 = self.binset(set1)
         mask2 = self.binset(set2)
-        return mask1 == (mask1 & mask2)
+        return int(mask1 == (mask1 & mask2))
 
     def matrix(self):
         #M = np.zeros((len(self.setlist), len(self.setlist)))

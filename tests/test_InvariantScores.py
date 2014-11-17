@@ -158,14 +158,25 @@ class TestPenaltyFunctions(unittest.TestCase):
 
 
 class TestMatrixScoring(unittest.TestCase):
-    def testScoreBig(self):
+    def testMatrixMaker(self):
         labels = ['a','b','c','d','e']
         setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
         matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
         M = matrix_maker.matrix()
         self.assertEqual(M.shape, (20,20))
 
-
+    def testMatrixScoring1(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        M = matrixmaker.MatrixMaker(labels,setlist).matrix()
+        SM = A.scored_matrix()
+        print M
+        #print SM
+        self.assertEqual(SM[5,0],2)
+        self.assertEqual(SM[10,2],7)
+        self.assertEqual(SM[12,6],4)
+ 
     #def testScoreDoubles(self):
         #labels = ['a','b','c','d','e']
         #setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e']]
@@ -223,7 +234,9 @@ class TestClassCompositions(unittest.TestCase):
         self.assertEqual(Q.quartet_dict(), A.quartetsinfo.quartet_dict())
         self.assertEqual(A.labels, M.labels)
         self.assertEqual(A.matrix.all(), A.scored_matrix().all())
-        #self.assertEqual(A.scored_matrix()[5,0],2) 
+        #self.assertEqual(A.scored_matrix()[5,0],1) 
+
+
     
 
 if __name__ == '__main__':
