@@ -1,5 +1,6 @@
 import unittest
 import matrixmaker
+import numpy as np
 
 class TestmatrixMaker(unittest.TestCase):
     def test_binlabels(self):
@@ -29,7 +30,7 @@ class TestmatrixMaker(unittest.TestCase):
         test1 = matrix_maker.inclusion(['MOM', 'BOB'], ['MOM', 'DAD', 'BOB'])
         test2 = matrix_maker.inclusion(['DAD'], ['MOM', 'BOB'])        
         self.assertEqual(test1, 1)
-        self.assertEqual(test2, 0)
+        self.assertEqual(test2, np.inf)
 
     def test_make_matrix(self):
         labels = ['MOM', 'DAD', 'BOB']
@@ -38,7 +39,7 @@ class TestmatrixMaker(unittest.TestCase):
         M = matrix_maker.matrix()
         self.assertEqual(M.shape, (3,3))
         self.assertEqual(M[2,0], 1)
-        self.assertEqual(M[1,0], 0)
+        self.assertEqual(M[1,0], np.inf)
         self.assertEqual(M[2,1], 1)
 
     def test2_make_matrix(self):
@@ -47,16 +48,16 @@ class TestmatrixMaker(unittest.TestCase):
         matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
         M = matrix_maker.matrix()
         self.assertEqual(M.shape, (20,20))
-        self.assertEqual(M[4,5], 0)
+        self.assertEqual(M[4,5], np.inf)
         self.assertEqual(M[5,0], 1)
         self.assertEqual(M[5,1], 1)
         self.assertEqual(M[16,5], 1)
         self.assertEqual(M[16,6], 1)
         self.assertEqual(M[16,7], 1)
-        self.assertEqual(M[16,8], 0)
+        self.assertEqual(M[16,8], np.inf)
         self.assertEqual(M[16,9], 1)
         self.assertEqual(M[16,12],1)
-        self.assertEqual(M[16,13],0)
+        self.assertEqual(M[16,13],np.inf)
 
 
 

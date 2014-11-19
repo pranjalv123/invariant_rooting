@@ -6,6 +6,7 @@ import string
 from dendropy import treecalc
 import matrixmaker
 import numpy as np
+import copy
 
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
@@ -272,6 +273,21 @@ class SubsetPenalties:
         self.matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
         self.matrix = self.matrix_maker.matrix()
         self.labels = self.matrix_maker.labels
+
+    #def pairs(self):
+        #clist = copy.copy(self.setlist)
+        #clabels = copy.copy(self.labels)
+        #p = []
+        #while len(clist) > 0:
+            #one = clist.pop(0)
+            #two = list(set(clabels) - set(one))
+            #if two in clist:
+                #p.append([one, two])
+                #clist.remove(two)
+            #else:
+                #print "missing pair from input setlist"
+        #return p
+        
         
     def add_quartets(self,set1,set2):
         stuntlabels = []
@@ -335,6 +351,7 @@ class SubsetPenalties:
             score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2])
         return score
 
+#problem is finding min NONZERO entry here. 
     def scored_matrix(self):
         SM = np.copy(self.matrix)
         for i in range(len(self.setlist)):
@@ -343,7 +360,25 @@ class SubsetPenalties:
                 n = self.setlist.index([self.setlist[i][1]])
                 SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
                 SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+            if len(self.setlist[i]) > 2:
+                clabels = copy.copy(self.setlist[i])
+                clist = copy.copy(self.setlist)
+                while len(clist) > 0:
+                        one = clist.pop(0)
+                        #if self.matrix[i, self.setlist.index(one)] == 1:
+                            #two = list(set(clabels) - set(one))
+                            #if two in self.setlist:
+                                #clist.remove(two)
+                                #onedex = self.setlist.index(one)
+                                #twodex = self.setlist.index(two)
+                                #SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex], min(SM[twodex])
+                                #SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex], min(SM[twodex])
+                            #else: 
+                                #SM[i,onedex] = 0
+                                #SM[i,twodex] = 0
+        #print SM
         return SM
+        
         
             
 #This class was not working well, replace with score_matrix function in class SubsetPenalties 

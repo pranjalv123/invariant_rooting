@@ -236,8 +236,17 @@ class TestClassCompositions(unittest.TestCase):
         self.assertEqual(A.matrix.all(), A.scored_matrix().all())
         #self.assertEqual(A.scored_matrix()[5,0],1) 
 
-
-    
+    def testClassStructure(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        M = matrixmaker.MatrixMaker(labels,setlist)
+        #B = A.pairs()
+        #print B
+        #self.assertTrue([['a', 'b'], ['c', 'd']] in B)
+        #self.assertTrue([['a', 'b'], ['c']] in B)
+        self.assertEqual(setlist, A.setlist) 
+         
 
 if __name__ == '__main__':
      unittest.main(
