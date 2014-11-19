@@ -233,7 +233,7 @@ class TestClassCompositions(unittest.TestCase):
         self.assertEqual(A.matrix.all(), M.matrix().all())
         self.assertEqual(Q.quartet_dict(), A.quartetsinfo.quartet_dict())
         self.assertEqual(A.labels, M.labels)
-        self.assertEqual(A.matrix.all(), A.scored_matrix().all())
+        #self.assertEqual(A.matrix.all(), A.scored_matrix().all())
         #self.assertEqual(A.scored_matrix()[5,0],1) 
 
     def testClassStructure(self):

@@ -206,15 +206,18 @@ class QuartetsInfo:
         
 #L same as get_freqs, i,j are indices of L specified as cherry of interest
     def quartet_score(self,L,i,j):
+        a = [i,j]
+        a.sort()
         f1, f2, f3 = self.get_freqs(L)
-        if [i,j] in [[0,1], [2,3]]:
+        if a in [[0,1], [2,3]]:
             u1, u2, u3 = f1, f2, f3
-        elif [i,j] in [[0,2], [1,3]]:
+        elif a in [[0,2], [1,3]]:
             u1, u2, u3 = f2, f1, f3
-        elif [i,j] in [[0,3], [1,2]]:
+        elif a in [[0,3], [1,2]]:
             u1, u2, u3 = f3, f1, f2
         else:
             print "problem with quartet score input indices"
+            print L, i, j
         a12 = min(u1-u2,0)
         a13 = min(u1-u3,0)
         score = abs(u2-u3) + (-1)*a12 + (-1)*a13
@@ -363,19 +366,23 @@ class SubsetPenalties:
             if len(self.setlist[i]) > 2:
                 clabels = copy.copy(self.setlist[i])
                 clist = copy.copy(self.setlist)
+                for s in clist:
+                    if SM[i,self.setlist.index(s)] == np.inf:
+                        clist.remove(s)
                 while len(clist) > 0:
                         one = clist.pop(0)
-                        #if self.matrix[i, self.setlist.index(one)] == 1:
-                            #two = list(set(clabels) - set(one))
-                            #if two in self.setlist:
-                                #clist.remove(two)
-                                #onedex = self.setlist.index(one)
-                                #twodex = self.setlist.index(two)
-                                #SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex], min(SM[twodex])
-                                #SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex], min(SM[twodex])
-                            #else: 
-                                #SM[i,onedex] = 0
-                                #SM[i,twodex] = 0
+                        two = list(set(clabels) - set(one))
+                        one.sort()
+                        two.sort()
+                        if two in clist:
+                            clist.remove(two)
+                            onedex = self.setlist.index(one)
+                            twodex = self.setlist.index(two)
+                            SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                            SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                        #else: 
+                            #SM[i,onedex] = np.inf
+                            #SM[i,twodex] = np.inf
         #print SM
         return SM
         
