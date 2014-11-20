@@ -355,9 +355,47 @@ class SubsetPenalties:
         return score
 
 #problem is finding min NONZERO entry here. 
+    #def scored_matrix(self):
+        #SM = np.copy(self.matrix)
+        #for j in range(len(self.setlist)):
+            #SM[j,j] = np.inf
+        #for i in range(len(self.setlist)):
+            #if len(self.setlist[i]) == 1:
+                #SM[i,i] = 0
+            #if len(self.setlist[i]) == 2:
+                #m = self.setlist.index([self.setlist[i][0]])
+                #n = self.setlist.index([self.setlist[i][1]])
+                #SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+                #SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+            #if len(self.setlist[i]) > 2:
+                #clabels = copy.copy(self.setlist[i])
+                #clist = copy.copy(self.setlist)
+                #for s in clist:
+                    #if SM[i,self.setlist.index(s)] == np.inf:
+                        #clist.remove(s)
+                #while len(clist) > 0:
+                        #one = clist.pop(0)
+                        #two = list(set(clabels) - set(one))
+                        #one.sort()
+                        #two.sort()
+                        #if two in clist:
+                            #clist.remove(two)
+                            #onedex = self.setlist.index(one)
+                            #twodex = self.setlist.index(two)
+                            #SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                            #SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                        #else: 
+                            #SM[i,onedex] = np.inf
+                            #SM[i,twodex] = np.inf
+        #print SM
+        #return SM
+
     def scored_matrix(self):
-        SM = np.copy(self.matrix)
+        SM = np.zeros((len(self.setlist),len(self.setlist)))
+        SM.fill(np.inf)
         for i in range(len(self.setlist)):
+            if len(self.setlist[i]) == 1:
+                SM[i,i] = 0
             if len(self.setlist[i]) == 2:
                 m = self.setlist.index([self.setlist[i][0]])
                 n = self.setlist.index([self.setlist[i][1]])
@@ -366,9 +404,6 @@ class SubsetPenalties:
             if len(self.setlist[i]) > 2:
                 clabels = copy.copy(self.setlist[i])
                 clist = copy.copy(self.setlist)
-                for s in clist:
-                    if SM[i,self.setlist.index(s)] == np.inf:
-                        clist.remove(s)
                 while len(clist) > 0:
                         one = clist.pop(0)
                         two = list(set(clabels) - set(one))
@@ -381,10 +416,10 @@ class SubsetPenalties:
                             SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                             SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                         #else: 
-                            #SM[i,onedex] = np.inf
-                            #SM[i,twodex] = np.inf
-        #print SM
         return SM
+
+
+
         
         
             

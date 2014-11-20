@@ -2,6 +2,7 @@ import unittest
 import InvariantScores
 import dendropy
 import matrixmaker
+import pprint
 
 class TestInvariantScores3(unittest.TestCase):
     def test_inv3(self):
@@ -171,11 +172,26 @@ class TestMatrixScoring(unittest.TestCase):
         A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
         M = matrixmaker.MatrixMaker(labels,setlist).matrix()
         SM = A.scored_matrix()
-        print M
-        #print SM
+        #print M
+        pp = pprint.PrettyPrinter(indent=4,width=300)
+        pp.pprint(SM)
         self.assertEqual(SM[5,0],2)
         self.assertEqual(SM[10,2],7)
-        self.assertEqual(SM[12,6],4)
+        self.assertEqual(SM[12,5],4)
+    
+    def testMatrixScoring2(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['b', 'd'],['b','e'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        M = matrixmaker.MatrixMaker(labels,setlist).matrix()
+        SM = A.scored_matrix()
+        #print M
+        pp = pprint.PrettyPrinter(indent=4,width=300)
+        pp.pprint(SM)
+        self.assertEqual(SM[5,0],2)
+        self.assertEqual(SM[12,2],7)
+        self.assertEqual(SM[14,5],4)
+ 
  
     #def testScoreDoubles(self):
         #labels = ['a','b','c','d','e']
