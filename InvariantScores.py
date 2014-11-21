@@ -406,15 +406,16 @@ class SubsetPenalties:
                 clist = copy.copy(self.setlist)
                 while len(clist) > 0:
                         one = clist.pop(0)
-                        two = list(set(clabels) - set(one))
-                        one.sort()
-                        two.sort()
-                        if two in clist:
-                            clist.remove(two)
-                            onedex = self.setlist.index(one)
-                            twodex = self.setlist.index(two)
-                            SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
-                            SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                        onedex = self.setlist.index(one)
+                        if self.matrix[i,onedex] == 1:
+                            two = list(set(clabels) - set(one))
+                            one.sort()
+                            two.sort()
+                            if two in clist:
+                                clist.remove(two)
+                                twodex = self.setlist.index(two)
+                                SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                                SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                         #else: 
         return SM
 
