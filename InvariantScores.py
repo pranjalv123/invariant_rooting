@@ -419,8 +419,43 @@ class SubsetPenalties:
                         #else: 
         return SM
 
+    #def clades(self):
+        #SM = self.scored_matrix()
+        #L = []
+        #temprows =[self.setlist.index(self.setlist[-1]), self.setlist.index(self.setlist[-1])]
+        #while temprow > 0:
+                #onedex = SM[temprow].argmin()
+                #one = self.setlist[onedex]
+                #two = list(set(self.setlist[temprow])-set(one))
+                #two.sort()
+                #twodex = self.setlist.index(two)
 
 
+
+    def clades(self):
+        SM = self.scored_matrix()
+        L = [self.setlist[-1]]
+        tempsets = [self.setlist[-1]]
+        while len(tempsets) > 0:
+            tmp = tempsets.pop(0)
+            if len(tmp) == 1:
+                L.append(tmp)
+            else:
+                rowdex = self.setlist.index(tmp)
+                onedex = SM[rowdex].argmin()
+                one = self.setlist[onedex]
+                two = list(set(self.setlist[rowdex]) - set(one))
+                two.sort()
+                L.append(one)
+                L.append(two)
+                if len(one) > 1:
+                    tempsets.append(one)
+                if len(two) > 1:
+                    tempsets.append(two)
+        return L
+
+
+        return L
         
         
             

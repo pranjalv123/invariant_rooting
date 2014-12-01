@@ -207,6 +207,16 @@ class TestMatrixScoring(unittest.TestCase):
         self.assertEqual(SM[10,3],np.inf)
         self.assertEqual(SM[13,4],np.inf)
         
+class TestTracebacks(unittest.TestCase):
+    def testTraceback1(self):
+        labels  = ['a','b','c','d']
+        setlist = [['a'],['b'],['c'],['d'],['a','b'], ['a', 'c'], ['a','d'], ['b','c'],['b', 'd'], ['c', 'd'], ['a','b', 'c'], ['a','b', 'd'], ['a','c','d'], ['b','c','d'],['a', 'b', 'c', 'd']];
+        A = InvariantScores.SubsetPenalties(labels,setlist,'output3')
+        SM = A.scored_matrix()
+        cladelist = A.clades()
+        print cladelist
+        L = [['a'],['b'],['c'],['d'],['c', 'd'],['b','c','d'], ['a', 'b', 'c', 'd']]
+        self.assertEqual(L,cladelist)
  
  
     #def testScoreDoubles(self):
