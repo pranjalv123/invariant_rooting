@@ -198,7 +198,7 @@ class TestMatrixScoring(unittest.TestCase):
         setlist = [['a'],['b'],['c'],['d'],['a','b'], ['a', 'c'], ['a','d'], ['b','c'],['b', 'd'], ['c', 'd'], ['a','b', 'c'], ['a','b', 'd'], ['a','c','d'], ['b','c','d'],['a', 'b', 'c', 'd']];
         A = InvariantScores.SubsetPenalties(labels,setlist,'output3')
         SM = A.scored_matrix()
-        print SM
+        #print SM
         self.assertEqual(SM[3,3],0)
         self.assertEqual(SM[4,0],8)
         self.assertEqual(SM[7,2],2)
@@ -214,11 +214,28 @@ class TestTracebacks(unittest.TestCase):
         A = InvariantScores.SubsetPenalties(labels,setlist,'output3')
         SM = A.scored_matrix()
         cladelist = A.clades()
-        print cladelist
+        #print cladelist
         #L = [['a'],['b'],['c'],['d'],['c', 'd'],['b','c','d'], ['a', 'b', 'c', 'd']]
-        L = [['a'],['b','c','d'],['d'],['b','c'], ['b'],['c']]
+        L = [['a','b','c','d'],['a'],['b','c','d'],['d'],['b','c'], ['b'],['c']]
         self.assertEqual(L,cladelist)
- 
+
+class TestTreesFromClades(unittest.TestCase):
+    def testBuildTree1(self):
+        labels  = ['a','b','c','d']
+        setlist = [['a'],['b'],['c'],['d'],['a','b'], ['a', 'c'], ['a','d'], ['b','c'],['b', 'd'], ['c', 'd'], ['a','b', 'c'], ['a','b', 'd'], ['a','c','d'], ['b','c','d'],['a', 'b', 'c', 'd']];
+        A = InvariantScores.SubsetPenalties(labels,setlist,'output3')
+        SM = A.scored_matrix()
+        cladelist = A.clades()
+        T = A.tree()
+        #print T
+        self.assertEqual(T, '(a,((b,c),d));')
+
+    def testBuildTree2(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['b', 'd'],['b','e'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        T = A.tree()
+        print T
  
     #def testScoreDoubles(self):
         #labels = ['a','b','c','d','e']

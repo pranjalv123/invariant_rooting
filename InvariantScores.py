@@ -434,8 +434,8 @@ class SubsetPenalties:
 
     def clades(self):
         SM = self.scored_matrix()
-        L = []
-        #L = [self.setlist[-1]]
+        #L = []
+        L = [self.setlist[-1]]
         tempsets = [self.setlist[-1]]
         while len(tempsets) > 0:
             tmp = tempsets.pop(0)
@@ -455,8 +455,55 @@ class SubsetPenalties:
                     tempsets.append(two)
         return L
 
+    #def tree(self):
+        #L = self.clades()
+        #start = L.pop(0)
+        #s = ''
+        #for i in range(len(start)-1):
+            #s = s + start[i]+ ','
+        #s = s + start[-1]
+        #s = '(' + s + ')'
+        #while len(L) > 0:
+            #tmp = L.pop(0)
+            #if len(tmp)> 1:
+                #spot = s.index(tmp[0])
+                #t = '('
+                #for j in range(len(tmp)-1):
+                    #t = t + tmp[j] +','
+                #t = t + tmp[-1] + ')'
+                #for k in range(len(tmp)):
+                    #s.replace(tmp[k] + ',','')
+                    #s.replace(tmp[k],'')
+                #s = s[:spot] + t + s[spot:]
+        #return s
 
-        return L
+    def tree(self):
+        L = self.clades()
+        start = L.pop(0)
+        s = ''
+        for i in range(len(start)):
+            s = s + start[i]+ ','
+        #s = s + start[-1]
+        s = '(' + s + ')'
+        while len(L) > 0:
+            tmp = L.pop(0)
+            if len(tmp) > 1:
+                first = tmp[0]
+                #find the first taxon, to use first letter as string index place
+                spot = s.index(first[0])
+                t = '('
+                for j in range(len(tmp)):
+                    t = t + tmp[j] + ','
+                t = t + '),'
+                for k in range(len(tmp)):
+                    s = s.replace(tmp[k] + ',', '')
+                    s = s.replace(tmp[k], '')
+                s = s[:spot] + t + s[spot:] 
+        s = s.replace(',)',')')
+        s = s + ';'
+        return s
+#this build tree takes an output from a clades function from SubsetPenalties.clades
+    
         
         
             
