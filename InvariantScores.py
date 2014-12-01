@@ -434,7 +434,8 @@ class SubsetPenalties:
 
     def clades(self):
         SM = self.scored_matrix()
-        L = [self.setlist[-1]]
+        L = []
+        #L = [self.setlist[-1]]
         tempsets = [self.setlist[-1]]
         while len(tempsets) > 0:
             tmp = tempsets.pop(0)

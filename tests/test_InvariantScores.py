@@ -215,7 +215,8 @@ class TestTracebacks(unittest.TestCase):
         SM = A.scored_matrix()
         cladelist = A.clades()
         print cladelist
-        L = [['a'],['b'],['c'],['d'],['c', 'd'],['b','c','d'], ['a', 'b', 'c', 'd']]
+        #L = [['a'],['b'],['c'],['d'],['c', 'd'],['b','c','d'], ['a', 'b', 'c', 'd']]
+        L = [['a'],['b','c','d'],['d'],['b','c'], ['b'],['c']]
         self.assertEqual(L,cladelist)
  
  
