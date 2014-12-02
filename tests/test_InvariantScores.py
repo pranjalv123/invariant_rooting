@@ -308,6 +308,14 @@ class TestClassCompositions(unittest.TestCase):
         self.assertEqual(setlist, A.setlist) 
          
 
+class TestPowerSet(unittest.TestCase):
+    def testPowerSet1(self):
+        labellist = ['ana', 'ann', 'bob','sue']
+        B = [['ana'], ['ann'], ['bob'], ['sue'], ['ana', 'ann'], ['ana', 'bob'], ['ana', 'sue'], ['ann', 'bob'], ['ann', 'sue'], ['bob', 'sue'], ['ana', 'ann', 'bob'], ['ana', 'ann', 'sue'], ['ana', 'bob', 'sue'], ['ann', 'bob', 'sue'], ['ana', 'ann', 'bob', 'sue']]
+        C = InvariantScores.powerset(labellist)
+        #print C
+        self.assertEqual(B,C)
+
 if __name__ == '__main__':
      unittest.main(
 )

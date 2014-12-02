@@ -502,11 +502,19 @@ class SubsetPenalties:
         s = s.replace(',)',')')
         s = s + ';'
         return s
+
+#powerset makes the list of all subsets of a label set
+def powerset(labellist):
+    P = []
+    for j in range(1,len(labellist)+1):
+        tmplist = list(itertools.combinations(labellist,j))
+        tmplist = [list(tmplist[i]) for i in range(len(tmplist))]
+        P = P + tmplist
+    return P
+
 #this build tree takes an output from a clades function from SubsetPenalties.clades
     
-        
-        
-            
+
 #This class was not working well, replace with score_matrix function in class SubsetPenalties 
 #matrix input called m  here is an instance of matrixmaker.MatrixMaker(labels,setlist)
 #class ScoredMatrix:
