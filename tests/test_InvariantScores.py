@@ -235,7 +235,7 @@ class TestTreesFromClades(unittest.TestCase):
         setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['b', 'd'],['b','e'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
         A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
         T = A.tree()
-        print T
+        #print T
  
     #def testScoreDoubles(self):
         #labels = ['a','b','c','d','e']
@@ -316,6 +316,57 @@ class TestPowerSet(unittest.TestCase):
         #print C
         self.assertEqual(B,C)
 
+class TestQuintetTopologies(unittest.TestCase):
+    def testQuintetsForOneSet(self):
+        labels = ['a','b','c','d','e']
+        Q = InvariantScores.QuintetsMaker(labels)
+        q = Q.quintets(('a','b','c','d','e'))
+        l = len(q)
+        self.assertEqual(15,l)
+        self.assertEqual('((a,b),c,(d,e));\n',q[0])
+        self.assertEqual('((b,e),a,(c,d));\n',q[14])
+        self.assertEqual('((a,e),b,(c,d));\n',q[9])
+
+    
+    def testFives(self):
+        labels = ['a','b','c','d','e','f']
+        Q = InvariantScores.QuintetsMaker(labels)
+        s = Q.fives()
+        self.assertEqual(len(s),6)
+        self.assertEqual(('a','b','c','d','e'),s[0])
+        self.assertEqual(('b','c','d','e','f'),s[5])
+        self.assertEqual(('a', 'b', 'd', 'e', 'f'),s[3])
+
+
+
+    def testAllQuintets1(self):
+        labels = ['a','b','c','d','e','f']
+        Q = InvariantScores.QuintetsMaker(labels)
+        q = Q.allquintets()
+        s = Q.fives()
+        self.assertEqual(len(s),6)
+        self.assertEqual(len(q),90)
+        self.assertEqual(labels, Q.labels)
+        #print q
+
+    def testMakeFile(self):
+        labels = ['a','b','c','d','e','f']
+        Q = InvariantScores.QuintetsMaker(labels)
+        Q.makefile('testfile')
+        g = open('testfile','r')
+        t =[]
+        for k in range(20):
+            t.append(g.readline())
+        self.assertEqual(t[0],'((a,b),c,(d,e));\n')
+        self.assertEqual(t[3],'((a,c),b,(d,e));\n')
+        self.assertEqual(t[15],'((a,b),c,(d,f));\n')
+        self.assertEqual(t[19],'((a,c),d,(b,f));\n')
+
+
+
+
+            
+        
 if __name__ == '__main__':
      unittest.main(
 )
