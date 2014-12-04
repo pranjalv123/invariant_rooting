@@ -1,10 +1,12 @@
 import itertools
 
+#this module makes unrooted quintet topologies for all 5-element subsets of a list of labels.
+#the class QuintetsMaker needs a list of strings, in alphabetical order (use labels.sort() to correct if not in such order)
 class QuintetsMaker:
     def __init__(self,labels):
         self.labels = labels
 
-#here l is list of five labels
+#here l is list of five labels, give l to this class method if you just want to see them
     def quintets(self,l):
         t1 = '((' +l[0]+ ',' +l[1]+'),' +l[2]+ ',(' +l[3]+ ',' +l[4]+ '));\n'
         t2 = '((' +l[0]+ ',' +l[1]+'),' +l[3]+ ',(' +l[2]+ ',' +l[4]+ '));\n'
@@ -24,11 +26,12 @@ class QuintetsMaker:
         q = [t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15]
         return q
 
-   
+  #this method just finds the five element subsets, as tuples,  of the input list "labels" 
     def fives(self):
         s = list(itertools.combinations(self.labels,5))
         return s
 
+# this method gives a list of all unrooted 5-taxon topologies for "labels", where the 15 unrooted topologies for each 5-element subset of "labels" are grouped together.  The order of the groups is the same as the order returned by itertools.combinations(self.labels,5))
     def allquintets(self):
         f = self.fives()
         All = []
@@ -36,7 +39,7 @@ class QuintetsMaker:
             All = All + self.quintets(f[j])
         return All
 
-#give filename as a string
+#this method will give you a file in your current directory with name of your choice: give filename as a string: example of usage >>> Q = quintetsmaker.QuintetsMaker() >>> Q.makefile('myquintets')
     def makefile(self,filename):
         f = open(filename,'w')
         for k in range(len(self.allquintets())):
