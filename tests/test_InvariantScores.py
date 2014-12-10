@@ -364,7 +364,25 @@ class TestQuintetTopologies(unittest.TestCase):
 
 
 
-
+class TestCladesFromFile(unittest.TestCase):
+    def testClades1(self):
+        C = InvariantScores.FileClades('fakeclusters')
+        self.assertEqual(C.filename,'fakeclusters')
+        print C.clades()
+        self.assertEqual(C.clades()[0], ['a','b','c','d'])
+        self.assertEqual(C.clades()[-1], ['d'])
+        self.assertEqual(len(C.clades()),12)
+        self.assertEqual(C.clades()[7],['c','d'])
+ 
+    def testClades2(self):
+        E = InvariantScores.FileClades('songclusters')
+        C = E.clades()
+        print len(C)
+        self.assertEqual(len(C),1932)
+        D = [C[i] for i in range(10)]
+        #print D
+        F = [C[-i] for i in range(1,11)]
+        print F
             
         
 if __name__ == '__main__':

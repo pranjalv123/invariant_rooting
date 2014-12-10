@@ -553,6 +553,30 @@ class QuintetsMaker:
             f.write(self.allquintets()[k])
         f.close()
 
+class FileClades:
+    def __init__(self,filename):
+        self.filename = filename
+
+    def clades(self):
+        C = []
+        f = open(self.filename, 'r')
+        for line in f:
+            C.append(line)
+        f.close()
+        for i in range(len(C)):
+            C[i] = C[i].replace('{','')
+        for j in range(len(C)):
+            C[j] = C[j].replace('}','')
+        for k in range(len(C)):
+            C[k] = C[k].replace('\n','')
+        D = []
+        for a in range(len(C)):
+            if len(C[a]) > 0:
+                D.append(C[a].split(','))
+        return D
+
+
+
 #labels here is a list of just five labels
 #def quintets(labels):
     
