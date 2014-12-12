@@ -570,6 +570,8 @@ class FileClades:
             C[j] = C[j].replace('}','')
         for k in range(len(C)):
             C[k] = C[k].replace('\n','')
+        for n in range(len(C)):
+            C[n] = C[n].replace(' ','')
         D = []
         for a in range(len(C)):
             if len(C[a]) > 0:
