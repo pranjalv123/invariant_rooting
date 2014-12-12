@@ -561,7 +561,8 @@ class FileClades:
         C = []
         f = open(self.filename, 'r')
         for line in f:
-            C.append(line)
+            if '{' in line:
+                C.append(line)
         f.close()
         for i in range(len(C)):
             C[i] = C[i].replace('{','')
@@ -572,7 +573,9 @@ class FileClades:
         D = []
         for a in range(len(C)):
             if len(C[a]) > 0:
-                D.append(C[a].split(','))
+                c = C[a].split(',')
+                c.sort()
+                D.append(c)
         return D
 
 

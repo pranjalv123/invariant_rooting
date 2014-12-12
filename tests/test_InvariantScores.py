@@ -368,7 +368,7 @@ class TestCladesFromFile(unittest.TestCase):
     def testClades1(self):
         C = InvariantScores.FileClades('fakeclusters')
         self.assertEqual(C.filename,'fakeclusters')
-        print C.clades()
+        #print C.clades()
         self.assertEqual(C.clades()[0], ['a','b','c','d'])
         self.assertEqual(C.clades()[-1], ['d'])
         self.assertEqual(len(C.clades()),12)
@@ -377,13 +377,21 @@ class TestCladesFromFile(unittest.TestCase):
     def testClades2(self):
         E = InvariantScores.FileClades('songclusters')
         C = E.clades()
-        print len(C)
+        #print len(C)
         self.assertEqual(len(C),1932)
         D = [C[i] for i in range(10)]
         #print D
         F = [C[-i] for i in range(1,11)]
-        print F
-            
+        #print F
+    
+    def testClades3(self):
+        F = InvariantScores.FileClades('mixedupclusters')
+        D = F.clades()
+        #print len(D)
+        #print D
+        self.assertEqual(len(D),12)
+        self.assertEqual(D[0],['a', 'b', 'c', 'd'])
+        self.assertEqual(D[2],['a','b'])
         
 if __name__ == '__main__':
      unittest.main(
