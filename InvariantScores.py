@@ -509,6 +509,8 @@ def powerset(labellist):
     for j in range(1,len(labellist)+1):
         tmplist = list(itertools.combinations(labellist,j))
         tmplist = [list(tmplist[i]) for i in range(len(tmplist))]
+        for k in range(len(tmplist)):
+            tmplist[k].sort()
         P = P + tmplist
     return P
 
