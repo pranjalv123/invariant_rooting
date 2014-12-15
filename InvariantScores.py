@@ -580,6 +580,7 @@ class FileClades:
                 c = C[a].split(',')
                 c.sort()
                 D.append(c)
+        D.reverse()
         return D
 
 
