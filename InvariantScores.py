@@ -581,6 +581,14 @@ class FileClades:
                 c.sort()
                 D.append(c)
         D.reverse()
+        Taxa = []
+        for i in range(len(D)):
+            if len(D[i]) == 1:
+                Taxa = Taxa + D[i]
+        Taxa.sort()
+        #Taxa.sort(key=float)
+        if (Taxa in D) == False:
+            D.append(Taxa)
         return D
 
 

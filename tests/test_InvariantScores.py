@@ -378,7 +378,7 @@ class TestCladesFromFile(unittest.TestCase):
         E = InvariantScores.FileClades('songclusters')
         C = E.clades()
         #print len(C)
-        self.assertEqual(len(C),1932)
+        self.assertEqual(len(C),1933)
         D = [C[i] for i in range(10)]
         #print D
         F = [C[-i] for i in range(1,11)]
@@ -393,6 +393,19 @@ class TestCladesFromFile(unittest.TestCase):
         self.assertEqual(D[-1],['a', 'b', 'c', 'd'])
         self.assertEqual(D[2],['a'])
         self.assertEqual(D[7],['a','d'])
+
+    def testClades4(self):
+        F = InvariantScores.FileClades('Ruth_weakILS_astralclades')
+        D = F.clades()
+        #print len(D)
+        #print D
+        self.assertEqual(len(D),555)
+        W = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
+        self.assertEqual(W,D[-1])
+        self.assertTrue(['9'] in D)
+
+
+        
         
 if __name__ == '__main__':
      unittest.main(
