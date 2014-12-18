@@ -439,6 +439,27 @@ class TestSubsetPenaltiesInequalitiesOnly(unittest.TestCase):
         #print B.scored_matrix()
 
 
+class TestTreesFromCladesInequalitiesOnly(unittest.TestCase):
+    def testBuildTree1(self):
+        labels  = ['a','b','c','d']
+        setlist = [['a'],['b'],['c'],['d'],['a','b'], ['a', 'c'], ['a','d'], ['b','c'],['b', 'd'], ['c', 'd'], ['a','b', 'c'], ['a','b', 'd'], ['a','c','d'], ['b','c','d'],['a', 'b', 'c', 'd']];
+        A = InvariantScores.SubsetPenaltiesInequalitiesOnly(labels,setlist,'output3')
+        SM = A.scored_matrix()
+        #print SM
+        cladelist = A.clades()
+        T = A.tree()
+        #print T
+        #self.assertEqual(T, '(a,((b,c),d));')
+
+    def testBuildTree2(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['b', 'd'],['b','e'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenaltiesInequalitiesOnly(labels, setlist, 'output2.txt')
+        SM = A.scored_matrix()
+        #print SM
+        T = A.tree()
+        #print T
+ 
         
         
 if __name__ == '__main__':
