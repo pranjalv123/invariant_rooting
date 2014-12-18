@@ -420,6 +420,24 @@ class TestCladesFromFile(unittest.TestCase):
         self.assertEqual(W,D[-1])
         self.assertTrue(['9'] in D)
 
+class TestSubsetPenaltiesInequalitiesOnly(unittest.TestCase):
+    def testNewClassPropertiesInequalitiesOnly(self):
+        labels = ['a','b','c','d','e']
+        setlist = [['a'],['b'],['c'],['d'],['e'], ['a','b'], ['a', 'c'], ['a','d'], ['a','e'], ['b','c'],['c', 'd'], ['c', 'e'], ['a','b', 'c'], ['a','b','e'],['b', 'c', 'd'], ['b','c','e'], ['a', 'b', 'c', 'd'],['a','b', 'c', 'e'], ['b', 'c', 'd', 'e'], ['a', 'b', 'c', 'd', 'e']]
+        A = InvariantScores.SubsetPenalties(labels, setlist, 'output2.txt')
+        B = InvariantScores.SubsetPenaltiesInequalitiesOnly(labels, setlist, 'output2.txt')
+        M = matrixmaker.MatrixMaker(labels,setlist)
+        Q = InvariantScores.QuartetsInfo('output2.txt')
+        P = InvariantScores.QuartetsInfoInequalitiesOnly('output2.txt')
+        self.assertEqual(B.matrix[0,4], M.matrix()[0,4])
+        self.assertEqual(B.matrix.all(), M.matrix().all())
+        self.assertEqual(Q.quartet_dict(), B.quartetsinfo.quartet_dict())
+        self.assertEqual(A.labels, B.labels)
+        self.assertEqual(P.quartet_dict(), Q.quartet_dict())
+        #self.assertEqual(B.scored_matrix()[-1,-2], A.scored_matrix()[-1,-2])
+        #print A.scored_matrix()
+        #print B.scored_matrix()
+
 
         
         

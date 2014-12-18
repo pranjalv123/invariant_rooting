@@ -19,6 +19,12 @@ def inv3(u1, u2, u3):
     score = abs(u2-u3) + (-1)*a12 + (-1)*a13
     return score
 
+# a version of the penalty without equality....
+def inv3I(u1, u2, u3):
+    a12 = min(u1-u2,0)
+    a13 = min(u1-u3,0)
+    score (-1)*a12 + (-1)*a13
+    return score
 
 #inv51 is for the balanced species tree 5 leaves (((a,b),c),(d,e))
 def inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
@@ -269,6 +275,98 @@ class QuartetsInfo:
                 score = score + newscore
         return score
 
+class QuartetsInfoInequalitiesOnly:
+    def __init__(self,quartetsfile):
+        self.filename = quartetsfile
+        #self.quartet_dict = {}
+        #with open(quartetsfile) as f:
+            #for line in f:
+                #(key,val) = line.split()
+                #self.quartet_dict[key] = int(val)
+    def quartet_dict(self):
+        d = {}
+        with open(self.filename) as f:
+            for line in f:
+                (key,val) = line.split()
+                d[key] = int(val)
+        return d
+
+#L is a list of four labels that are strings-alphabetical order required
+    def get_freqs(self,L):
+        s = self.quartet_dict()
+        q = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));']
+        u = [0,0,0]
+        for i in range(3):
+            if q[i] in s:
+                u[i] = s[q[i]]
+        return u
+        
+#L same as get_freqs, i,j are indices of L specified as cherry of interest
+    def quartet_score(self,L,i,j):
+        a = [i,j]
+        a.sort()
+        f1, f2, f3 = self.get_freqs(L)
+        if a in [[0,1], [2,3]]:
+            u1, u2, u3 = f1, f2, f3
+        elif a in [[0,2], [1,3]]:
+            u1, u2, u3 = f2, f1, f3
+        elif a in [[0,3], [1,2]]:
+            u1, u2, u3 = f3, f1, f2
+        else:
+            print "problem with quartet score input indices"
+            print L, i, j
+        a12 = min(u1-u2,0)
+        a13 = min(u1-u3,0)
+        score = (-1)*a12 + (-1)*a13
+        return score
+
+    def quartet_labels_dict(self):
+        g = self.quartet_dict()
+        h = {}
+        gkeys = g.keys()
+        for i in range(len(gkeys)):
+            keycopy = gkeys[i]
+            labellist = keycopy.split(',')
+            for j in range(4):
+                labellist[j] = labellist[j].translate(None,string.punctuation)        
+            h[gkeys[i]] = labellist
+        return h
+
+#D1,D2  are two taxa labels as strings in alphabetical order
+    def score_double(self,D1,D2):
+        g = self.quartet_dict()
+        h = self.quartet_labels_dict()
+        #print g
+        #print h
+        score = 0
+        for k in g:
+            if '(' + D1 + ',' + D2 + ')' in k:
+                #print k
+                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2))
+                #print newscore
+                score = score + newscore
+        return score
+
+    #def penalty_score(self, subset1, subset2):
+        
+    def score_tree(self,treequartetsfile):
+        treelist = []
+        with open(treequartetsfile) as f:
+            for line in f:
+                (keygen,val) = line.split()
+                labellist = keygen.split(',')
+                for j in range(4):
+                    labellist[j] = labellist[j].translate(None,string.punctuation)        
+                treelist.append(labellist)
+        #print treelist
+        score = 0
+        for k in range(len(treelist)):
+                newscore = self.quartet_score(treelist[k],0,1)
+                #print newscore
+                score = score + newscore
+        return score
+
+
 class SubsetPenalties:
     def __init__(self,labels,setlist,quartetsfile):
         self.quartetsinfo = QuartetsInfo(quartetsfile)
@@ -502,6 +600,241 @@ class SubsetPenalties:
         s = s.replace(',)',')')
         s = s + ';'
         return s
+
+class SubsetPenaltiesInequalitiesOnly:
+    def __init__(self,labels,setlist,quartetsfile):
+        self.quartetsinfo = QuartetsInfoInequalitiesOnly(quartetsfile)
+        self.setlist = setlist
+        self.matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
+        self.matrix = self.matrix_maker.matrix()
+        self.labels = self.matrix_maker.labels
+
+    #def pairs(self):
+        #clist = copy.copy(self.setlist)
+        #clabels = copy.copy(self.labels)
+        #p = []
+        #while len(clist) > 0:
+            #one = clist.pop(0)
+            #two = list(set(clabels) - set(one))
+            #if two in clist:
+                #p.append([one, two])
+                #clist.remove(two)
+            #else:
+                #print "missing pair from input setlist"
+        #return p
+        
+        
+    def add_quartets(self,set1,set2):
+        stuntlabels = []
+        for i in range(len(self.labels)):
+            stuntlabels.append(self.labels[i])
+        compl = set1 + set2
+        #print stuntlabels, compl
+        for s in compl:
+            stuntlabels.remove(s)
+            #print stuntlabels
+        #for t in set2:
+            #stuntlabels.remove(t)
+            #print stuntlabels
+        A = itertools.combinations(stuntlabels,2)
+        AA = list(A)
+        SminusApairs = [list(AA[j]) for j in range(len(AA))]
+        A1A2 = []
+        for k in range(len(set1)):
+            for l in range(len(set2)):
+                A1A2.append([set1[k],set2[l]])
+        AQ = []
+        for m in range(len(A1A2)):
+            for n in range(len(SminusApairs)):
+                tmp = A1A2[m] + SminusApairs[n]
+                tmp.sort()
+                AQ.append([tmp, tmp.index(A1A2[m][0]), tmp.index(A1A2[m][1])])
+        #print AQ
+        return AQ
+
+    def subtract_quartets(self,set1,set2):
+        a1 = itertools.combinations(set1,2)
+        a2 = itertools.combinations(set2,2)
+        aa1 = list(a1)
+        aa2 = list(a2)
+        A1 = [list(aa1[i]) for i in range(len(aa1))]
+        A2 = [list(aa2[j]) for j in range(len(aa2))]
+        SQ = []
+        for m in range(len(A1)):
+            for n in range(len(A2)):
+                tmp = A1[m] + A2[n]
+                tmp.sort()
+                SQ.append([tmp,tmp.index(A1[m][0]), tmp.index(A1[m][1])])
+        #print SQ
+        return SQ
+
+#need to enter score1, score2 for set1, set2 now: later can make this flexible? sets of size 1 and 2 are 0 and fixed. 
+    def penalty_score(self,set1,set2,score1,score2):
+        g = self.quartetsinfo.quartet_dict()
+        h = self.quartetsinfo.quartet_labels_dict()
+        #labs = self.labels
+        #print labs, set1, set2
+        AQ = self.add_quartets(set1,set2)
+        #print AQ
+        SQ = self.subtract_quartets(set1,set2)
+        #print SQ
+        score = score1 + score2
+        for i in range(len(AQ)):
+            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2])
+            #print score
+        for j in range(len(SQ)): 
+            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2])
+        return score
+
+#problem is finding min NONZERO entry here. 
+    #def scored_matrix(self):
+        #SM = np.copy(self.matrix)
+        #for j in range(len(self.setlist)):
+            #SM[j,j] = np.inf
+        #for i in range(len(self.setlist)):
+            #if len(self.setlist[i]) == 1:
+                #SM[i,i] = 0
+            #if len(self.setlist[i]) == 2:
+                #m = self.setlist.index([self.setlist[i][0]])
+                #n = self.setlist.index([self.setlist[i][1]])
+                #SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+                #SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+            #if len(self.setlist[i]) > 2:
+                #clabels = copy.copy(self.setlist[i])
+                #clist = copy.copy(self.setlist)
+                #for s in clist:
+                    #if SM[i,self.setlist.index(s)] == np.inf:
+                        #clist.remove(s)
+                #while len(clist) > 0:
+                        #one = clist.pop(0)
+                        #two = list(set(clabels) - set(one))
+                        #one.sort()
+                        #two.sort()
+                        #if two in clist:
+                            #clist.remove(two)
+                            #onedex = self.setlist.index(one)
+                            #twodex = self.setlist.index(two)
+                            #SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                            #SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                        #else: 
+                            #SM[i,onedex] = np.inf
+                            #SM[i,twodex] = np.inf
+        #print SM
+        #return SM
+
+    def scored_matrix(self):
+        SM = np.zeros((len(self.setlist),len(self.setlist)))
+        SM.fill(np.inf)
+        for i in range(len(self.setlist)):
+            if len(self.setlist[i]) == 1:
+                SM[i,i] = 0
+            if len(self.setlist[i]) == 2:
+                m = self.setlist.index([self.setlist[i][0]])
+                n = self.setlist.index([self.setlist[i][1]])
+                SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+                SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
+            if len(self.setlist[i]) > 2:
+                clabels = copy.copy(self.setlist[i])
+                clist = copy.copy(self.setlist)
+                while len(clist) > 0:
+                        one = clist.pop(0)
+                        onedex = self.setlist.index(one)
+                        if self.matrix[i,onedex] == 1:
+                            two = list(set(clabels) - set(one))
+                            one.sort()
+                            two.sort()
+                            if two in clist:
+                                clist.remove(two)
+                                twodex = self.setlist.index(two)
+                                SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                                SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                        #else: 
+        return SM
+
+    #def clades(self):
+        #SM = self.scored_matrix()
+        #L = []
+        #temprows =[self.setlist.index(self.setlist[-1]), self.setlist.index(self.setlist[-1])]
+        #while temprow > 0:
+                #onedex = SM[temprow].argmin()
+                #one = self.setlist[onedex]
+                #two = list(set(self.setlist[temprow])-set(one))
+                #two.sort()
+                #twodex = self.setlist.index(two)
+
+
+
+    def clades(self):
+        SM = self.scored_matrix()
+        #L = []
+        L = [self.setlist[-1]]
+        tempsets = [self.setlist[-1]]
+        while len(tempsets) > 0:
+            tmp = tempsets.pop(0)
+            if len(tmp) == 1:
+                L.append(tmp)
+            else:
+                rowdex = self.setlist.index(tmp)
+                onedex = SM[rowdex].argmin()
+                one = self.setlist[onedex]
+                two = list(set(self.setlist[rowdex]) - set(one))
+                two.sort()
+                L.append(one)
+                L.append(two)
+                if len(one) > 1:
+                    tempsets.append(one)
+                if len(two) > 1:
+                    tempsets.append(two)
+        return L
+
+    #def tree(self):
+        #L = self.clades()
+        #start = L.pop(0)
+        #s = ''
+        #for i in range(len(start)-1):
+            #s = s + start[i]+ ','
+        #s = s + start[-1]
+        #s = '(' + s + ')'
+        #while len(L) > 0:
+            #tmp = L.pop(0)
+            #if len(tmp)> 1:
+                #spot = s.index(tmp[0])
+                #t = '('
+                #for j in range(len(tmp)-1):
+                    #t = t + tmp[j] +','
+                #t = t + tmp[-1] + ')'
+                #for k in range(len(tmp)):
+                    #s.replace(tmp[k] + ',','')
+                    #s.replace(tmp[k],'')
+                #s = s[:spot] + t + s[spot:]
+        #return s
+
+    def tree(self):
+        L = self.clades()
+        start = L.pop(0)
+        s = ''
+        for i in range(len(start)):
+            s = s + start[i]+ ','
+        #s = s + start[-1]
+        s = '(' + s + ')'
+        while len(L) > 0:
+            tmp = L.pop(0)
+            if len(tmp) > 1:
+                first = tmp[0]
+                #find the first taxon, to use first letter as string index place
+                spot = s.index(first[0])
+                t = '('
+                for j in range(len(tmp)):
+                    t = t + tmp[j] + ','
+                t = t + '),'
+                for k in range(len(tmp)):
+                    s = s.replace(tmp[k] + ',', '')
+                    s = s.replace(tmp[k], '')
+                s = s[:spot] + t + s[spot:] 
+        s = s.replace(',)',')')
+        s = s + ';'
+        return s
+
 
 #powerset makes the list of all subsets of a label set
 def powerset(labellist):
