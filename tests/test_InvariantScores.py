@@ -460,7 +460,29 @@ class TestTreesFromCladesInequalitiesOnly(unittest.TestCase):
         T = A.tree()
         #print T
  
-        
+class TestDendropyTrees(unittest.TestCase):
+    def testBuildDendropyTree1(self):
+        Taxa = ['1','2','3','4']
+        cladelist = [['1','2','3'],['2','3'],['1'],['2'],['3']]
+        T = InvariantScores.dendropy_clades_tree(Taxa,cladelist)
+        print T
+        S = dendropy.Tree.get_from_string('(1,4,(2,3));','newick',taxon_set = T.taxon_set)
+        d = S.symmetric_difference(T)
+        self.assertEqual(d,0)
+
+    def testBuildDendropyTree2(self):
+        Taxa = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']
+        cladelist =[['1', '10', '11', '2', '3', '4', '5', '6', '7', '8'],['9'], ['5', '6', '7', '8'], ['1', '10', '11', '2', '3', '4'], ['7', '8'], ['5', '6'], ['10'], ['1', '11', '2', '3', '4'], ['7'], ['8'], ['5'], ['6'], ['11'], ['1', '2', '3', '4'], ['4'], ['1', '2', '3'], ['3'], ['1', '2'], ['1'], ['2']]
+        T = InvariantScores.dendropy_clades_tree(Taxa,cladelist)
+        print T
+        S = dendropy.Tree.get_from_string('((((((1,2),3),4),11),10),((5,6),(7,8)),9);','newick',taxon_set = T.taxon_set)
+        print S
+        S1 = dendropy.Tree.get_from_string('((((((1,2),4),3),11),10),((5,6),(7,8)),9);','newick',taxon_set = T.taxon_set)
+        print S1
+        d = S.symmetric_difference(T)
+        d1 = S1.symmetric_difference(T)
+        self.assertEqual(d,0)
+        self.assertEqual(d1,2)
         
 if __name__ == '__main__':
      unittest.main(

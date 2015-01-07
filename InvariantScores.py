@@ -835,6 +835,27 @@ class SubsetPenaltiesInequalitiesOnly:
         s = s + ';'
         return s
 
+#dendropy_clades_tree takes list of Taxa and list of clades, returns a tree
+def dendropy_clades_tree(Taxa,cladelist):
+    trees = ''
+    for i in range(len(cladelist)):
+        compl = list(set(Taxa)-set(cladelist[i]))
+        half1 = '(('
+        for k in range(len(cladelist[i])-1):
+            half1 = half1 + cladelist[i][k] + ','
+        half1 = half1 + cladelist[i][-1] +'),'
+        half2 = '('
+        for j in range(len(compl)-1):
+            half2 = half2 + compl[j] + ','
+        half2  = half2 + compl[-1] + '));'
+        tree = half1+half2
+        trees = trees+tree
+    tmplist = dendropy.TreeList.get_from_string(trees,'newick')
+    finaltree = tmplist.consensus(min_freq=0)
+    return finaltree
+
+        
+
 
 #powerset makes the list of all subsets of a label set
 def powerset(labellist):
