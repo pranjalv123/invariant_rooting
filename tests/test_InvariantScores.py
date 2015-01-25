@@ -122,7 +122,15 @@ class TestQuartetStuff(unittest.TestCase):
         self.assertEqual(acdescore,1)
         self.assertEqual(becdscore,3)
         self.assertEqual(aecdscore,3)
+
+    def testQuartetScores2(self):
+        info = InvariantScores.QuartetsInfo("R1.10gene.tre.quartets")
+        score1 = info.quartet_score(['S1', 'S10', 'S2', 'S3'],0,1)
+        score2 = info.quartet_score(['S2', 'S10', 'S1', 'S3'],0,1)
+        self.assertEqual(score1,4)
+        self.assertEqual(score2,2)
  
+
 class TestQuartetLabelsDict(unittest.TestCase):
     def testlabelsdict(self):
         info = InvariantScores.QuartetsInfo("output2.txt")
@@ -157,6 +165,10 @@ class TestPenaltyFunctions(unittest.TestCase):
         treescore2 = info.score_tree("lonetree2quartets")
         self.assertEqual(treescore,4)
         self.assertEqual(treescore2,10)
+
+    def testTreeScore2(self):
+        info = InvariantScores.QuartetsInfo("R1.10gene.tre.quartets")
+
 
 
 class TestMatrixScoring(unittest.TestCase):
