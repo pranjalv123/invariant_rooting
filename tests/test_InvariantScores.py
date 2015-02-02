@@ -144,6 +144,8 @@ class TestQuartetLabelsDict(unittest.TestCase):
 class TestPenaltyFunctions(unittest.TestCase):
     def testPenaltyDoubleton(self):
         info = InvariantScores.QuartetsInfo("output2.txt")
+        #print info.quartet_dict()
+        #print info.quartet_labels_dict()
         fab = info.score_double('a', 'b')
         fac = info.score_double('a', 'c')
         fad = info.score_double('a', 'd')
@@ -154,11 +156,11 @@ class TestPenaltyFunctions(unittest.TestCase):
         self.assertEqual(fab,2)
         self.assertEqual(fac,7)
         self.assertEqual(fad,0)
-        self.assertEqual(fae,0)
+        self.assertEqual(fae,3)
         self.assertEqual(fbc,1)
-        self.assertEqual(fcd,1)
+        self.assertEqual(fcd,7)
         self.assertEqual(fce,1)
-
+    
     def testTreeScore(self):
         info = InvariantScores.QuartetsInfo("output2.txt") 
         treescore = info.score_tree("lonetreequartets")
