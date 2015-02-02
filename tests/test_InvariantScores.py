@@ -129,7 +129,24 @@ class TestQuartetStuff(unittest.TestCase):
         score2 = info.quartet_score(['S2', 'S10', 'S1', 'S3'],0,1)
         self.assertEqual(score1,4)
         self.assertEqual(score2,2)
- 
+    
+    def testQuartetScores3(self):
+        info = InvariantScores.QuartetsInfo("11treesquartets")
+        score1 = info.quartet_score(['S1','S2','S4','S11'],0,3)
+        self.assertEqual(score1,3)
+        score2 = info.quartet_score(['S2','S5','S1','S11'],2,3)
+        self.assertEqual(score2,1)
+        score3 = info.quartet_score(['S2','S5','S1','S11'],0,1) 
+        self.assertEqual(score3,1)
+        score4 = info.quartet_score(['S1','S2','S5','S11'],0,3)
+        self.assertEqual(score4,1)
+        score5 = info.quartet_score(['S1','S11','S4','S5'],0,1)
+        self.assertEqual(score5,3) 
+        score6 = info.quartet_score(['S1','S4','S2','S5'],2,3)
+        self.assertEqual(score6,0)
+        score7 = info.quartet_score(['S11','S4','S2','S5'],0,1)
+        self.assertEqual(score7,1)
+
 
 class TestQuartetLabelsDict(unittest.TestCase):
     def testlabelsdict(self):
@@ -161,6 +178,17 @@ class TestPenaltyFunctions(unittest.TestCase):
         self.assertEqual(fcd,7)
         self.assertEqual(fce,1)
     
+    def testPenaltyDoubleton2(self):
+        info = InvariantScores.QuartetsInfo("11treesquartets")
+        #print info.quartet_dict()
+        #print info.quartet_labels_dict()
+        f = info.score_double('S11','S1')
+        self.assertEqual(f,7)
+        g = info.score_double('S1','S11')
+        self.assertEqual(g,7)
+        h = info.score_double('S1','S2')
+        self.assertEqual(h,0) 
+ 
     def testTreeScore(self):
         info = InvariantScores.QuartetsInfo("output2.txt") 
         treescore = info.score_tree("lonetreequartets")
@@ -170,6 +198,12 @@ class TestPenaltyFunctions(unittest.TestCase):
 
     def testTreeScore2(self):
         info = InvariantScores.QuartetsInfo("R1.10gene.tre.quartets")
+
+    def testTreeScore3(self):
+        info = InvariantScores.QuartetsInfo('11treesquartets')
+        treescore = info.score_tree('11trees-1-quartets')
+        self.assertEqual(treescore,8)
+
 
 
 
