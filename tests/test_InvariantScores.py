@@ -205,8 +205,6 @@ class TestPenaltyFunctions(unittest.TestCase):
         self.assertEqual(treescore,8)
 
 
-
-
 class TestMatrixScoring(unittest.TestCase):
     def testMatrixMaker(self):
         labels = ['a','b','c','d','e']
