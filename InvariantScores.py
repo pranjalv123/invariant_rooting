@@ -160,7 +160,9 @@ def get_rooted_quintet(S,l,i):
     T.ladderize(ascending=False)
     return T
 
-#need to fix score_quintet function 'pipleline'
+#This function scores an edge based on all five-element subsets of the leaf set of the species tree.  This will be replaced or 
+#modified to score an edge based on 2n-3 five-elements subsets where n is the numbers of species.  i indexes in the edges in 
+#find _best_edge_by_total_quintet_score(S,treelist):
 def total_quintet_score(S,i,treelist):
     T = dendropy.Tree(S)  
     L = [n.taxon.label for n in T.leaf_nodes()]
