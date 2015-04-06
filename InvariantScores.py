@@ -96,18 +96,23 @@ def get_dist(l,treelist):
     #viztrees = [dist[0][k].as_string("newick") for k in range(15)]
     #print viztrees
     garbage = []
+    incompletes = []
+    labels = [n.label for n in treelist.taxon_set]
     for i in range(len(treelist)):
-        smalltree = dendropy.Tree(treelist[i])
-        smalltree.retain_taxa_with_labels(l)
-        smalltree.update_splits()
-        trace = [dendropy.treecalc.symmetric_difference(smalltree,dist[0][j]) for j in range(15)]
-        if trace.count(0) > 1:
-            garbage.append(['error: too many zeroes', smalltree.as_string("newick"), smalltree,  treelist[i], trace])
-        elif 0 in trace:
-            dist[1][trace.index(0)] = dist[1][trace.index(0)] + 1
+        smalltree = treelist[i]
+        if len(list(smalltree.leaf_nodes())) == len(labels):
+            smalltree.retain_taxa_with_labels(l)
+            smalltree.update_splits()
+            trace = [dendropy.treecalc.symmetric_difference(smalltree,dist[0][j]) for j in range(15)]
+            if trace.count(0) > 1:
+                garbage.append(['error: too many zeroes', smalltree.as_string("newick"), smalltree,  treelist[i], trace])
+            elif 0 in trace:
+                dist[1][trace.index(0)] = dist[1][trace.index(0)] + 1
+            else:
+                garbage.append([smalltree.as_newick_string(), treelist[i].as_newick_string(), min(trace)])
         else:
-            garbage.append([smalltree.as_newick_string(), treelist[i].as_newick_string(), min(trace)])
-    return [dist, garbage]
+            incompletes.append(str(i)+'th gene tree incomplete')
+    return [dist, garbage, incompletes]
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 def basic_score_quintet(S,l, treelist):
@@ -166,8 +171,11 @@ def get_rooted_quintet(S,l,i):
 def total_quintet_score(S,i,treelist):
     T = dendropy.Tree(S)  
     L = [n.taxon.label for n in T.leaf_nodes()]
-    Q1 = list(itertools.combinations(L,5))  
+    #print L
+    Q1 = list(itertools.combinations(L,5))
+    #print Q1 
     Q = [list(Q1[k]) for k in range(len(Q1))]
+    #print Q
     Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
     scorelist = []
     for j in range(len(Qtreeslist)):
