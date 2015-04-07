@@ -139,7 +139,7 @@ def basic_score_quintet(S,l, treelist):
         #score_function = scorefuncs[shapes.index(rooted_shape)]
         #score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
     else:
-        print 'error: quintet topology ' + T.as_newick_string + '  not in list'
+        print 'error: quintet topology ' + T.as_newick_string() + '  not in list'
         score = 0
     return score
 
