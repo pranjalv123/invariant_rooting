@@ -47,6 +47,7 @@ print 'there are this many edges in the species tree:'
 print len(edgelist)
 
 #print 'edge 0'
+#for i in range(len(edgelist)):
 for i in range(len(edgelist)):
     edgescores.append(InvariantScores.total_quintet_score(S,i,treelist))
 
@@ -54,6 +55,23 @@ print 'edgescores are'
 
 print edgescores
 
+print 'edgescores are indexed by the list'
+
+print edgelist
+
+print 'minimum scoring edge is has index'
+
+minscore = edgescores.index(min(edgescores))
+
+print minscore
+
+T = dendropy.Tree(S)
+
+T.reroot_at_edge(edgelist[minscore])
+
+print 'tree rooted at minscoring edge is'
+
+print T.as_ascii_plot()
 #T = InvariantScores.find_best_edge_by_total_quintet_score(S,treelist)
 
 #print 'finding best rooting for species tree julies.genes.4.3.15.astral.tre from treelist julies.genes.4.3.15'
