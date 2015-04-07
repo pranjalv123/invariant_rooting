@@ -83,9 +83,9 @@ print t1-t0
 
 print 'to score the 4th edge'
 
-edgescores = [0.0 for i in range(len(edgelist))]
+edgescores = [0.0 for i in range(len(edgelist)-1)]
 
-print 'there are this many edges in the species tree:'
+print 'there are this many edges in the species tree, because one is a dendropy artifact:'
 
 print len(edgelist)
 
