@@ -133,7 +133,7 @@ def basic_score_quintet(S,l, treelist):
         score_function = scorefuncs[shapes.index(rooted_shape)]
         score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
     else:
-        print 'error: quintet topology not in list'
+        print 'error: quintet topology ' + T.as_newick_string + '  not in list'
     return score
 
 #score_quintet takes a rooted quintet tree Q as input-is ladderized output of get_rooted_quintet
@@ -152,7 +152,8 @@ def score_quintet(Q,l, treelist):
         score_function = scorefuncs[shapes.index(rooted_shape)]
         score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
     else:
-        print 'error: quintet topology not in list'
+        print 'error: quintet topology ' + Q.as_newick_string() + '  not in list'
+        score = 0
     return score
 
 #S is unrooted Astral tree, l is list of five taxa labels from S, i is the index of edge we want to root at in set 2n-3
@@ -179,7 +180,7 @@ def total_quintet_score(S,i,treelist):
     Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
     scorelist = []
     for j in range(len(Qtreeslist)):
-        scorelist.append(score_quintet(Qtreeslist[j], Q[j],treelist))
+        scorelist.append(basic_score_quintet(Qtreeslist[j], Q[j],treelist))
     totalscore = sum(scorelist)
     return totalscore
     
