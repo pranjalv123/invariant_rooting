@@ -38,7 +38,7 @@ def inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     score = score1 + score2
     return score
 
-#inv52 is for the caterpillar tree 5 leaves (((a,b),c),d),e)
+#inv52 is for the caterpillar tree 5 leaves ((((a,b),c),d),e)
 def inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15): 
     a12 = min(u1-u2,0)
     a14 = min(u1-u4,0)
@@ -99,7 +99,7 @@ def get_dist(l,treelist):
     incompletes = []
     labels = [n.label for n in treelist.taxon_set]
     for i in range(len(treelist)):
-        smalltree = treelist[i]
+        smalltree = copy.deepcopy(treelist[i])
         if len(list(smalltree.leaf_nodes())) == len(labels):
             smalltree.retain_taxa_with_labels(l)
             smalltree.update_splits()
@@ -128,34 +128,40 @@ def basic_score_quintet(S,l, treelist):
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
+    #print U[0][1]
     scorefuncs= [inv51, inv52, inv53]
-    if rooted_shape in shapes:
-        score_function = scorefuncs[shapes.index(rooted_shape)]
-        score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    if rooted_shape == shapes[0]:
+        score = inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    elif rooted_shape == shapes[1]:
+        score = inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    elif rooted_shape == shapes[2]:
+        score = inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        #score_function = scorefuncs[shapes.index(rooted_shape)]
+        #score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
     else:
         print 'error: quintet topology ' + T.as_newick_string + '  not in list'
         score = 0
     return score
 
 #score_quintet takes a rooted quintet tree Q as input-is ladderized output of get_rooted_quintet
-def score_quintet(Q,l, treelist):
-    rooted_shape_str = Q.as_newick_string()
-    rooted_shape = ''
-    y = ['(', ')', ',']
-    for i in range(len(rooted_shape_str)):
-        if rooted_shape_str[i] in y:
-            rooted_shape = rooted_shape + rooted_shape_str[i]
-    shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
-    U = get_dist(l,treelist)
-    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1]
-    scorefuncs= [inv51, inv52, inv53]
-    if rooted_shape in shapes:
-        score_function = scorefuncs[shapes.index(rooted_shape)]
-        score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
-    else:
-        print 'error: quintet topology ' + Q.as_newick_string() + '  not in list'
-        score = 0
-    return score
+#def score_quintet(Q,l, treelist):
+    #rooted_shape_str = Q.as_newick_string()
+    #rooted_shape = ''
+    #y = ['(', ')', ',']
+    #for i in range(len(rooted_shape_str)):
+        #if rooted_shape_str[i] in y:
+            #rooted_shape = rooted_shape + rooted_shape_str[i]
+    #shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    #U = get_dist(l,treelist)
+    #[u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1]
+    #scorefuncs= [inv51, inv52, inv53]
+    #if rooted_shape in shapes:
+        #score_function = scorefuncs[shapes.index(rooted_shape)]
+        #score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    #else:
+        #print 'error: quintet topology ' + Q.as_newick_string() + '  not in list'
+        #score = 0
+    #return score
 
 #S is unrooted Astral tree, l is list of five taxa labels from S, i is the index of edge we want to root at in set 2n-3
 def get_rooted_quintet(S,l,i):
@@ -171,20 +177,25 @@ def get_rooted_quintet(S,l,i):
 #modified to score an edge based on 2n-3 five-elements subsets where n is the numbers of species.  i indexes in the edges in 
 #find _best_edge_by_total_quintet_score(S,treelist):
 def total_quintet_score(S,i,treelist):
-    T = dendropy.Tree(S)  
+    #T needs to be S rooted at edge i!!!!
+    T = dendropy.Tree(S) 
+    edgelist = [e for e in T.postorder_edge_iter()]
+    #root_edge = edgelist[i]
+    T.reroot_at_edge(edgelist[i])
     L = [n.taxon.label for n in T.leaf_nodes()]
     #print L
     Q1 = list(itertools.combinations(L,5))
     #print Q1 
     Q = [list(Q1[k]) for k in range(len(Q1))]
     #print Q
-    Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
+    #Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
     scorelist = []
     print 'OOOGA BOOGA'
-    for j in range(len(Qtreeslist)):
-        H = basic_score_quintet(Qtreeslist[j], Q[j],treelist)
+    #for j in range(len(Qtreeslist)):
+    for j in range(len(Q)):
+        H = basic_score_quintet(T, Q[j],treelist)
         print H
-        scorelist.append(basic_score_quintet(Qtreeslist[j], Q[j],treelist))
+        scorelist.append(basic_score_quintet(T, Q[j],treelist))
     totalscore = sum(scorelist)
     return totalscore
     

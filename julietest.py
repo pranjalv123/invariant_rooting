@@ -48,9 +48,9 @@ print len(edgelist)
 
 #print 'edge 0'
 for i in range(len(edgelist)):
-    edgescores.append(InvariantScores.total_quintet_score(S,0,treelist))
+    edgescores.append(InvariantScores.total_quintet_score(S,i,treelist))
 
-print 'edge 1'
+print 'edgescores are'
 
 print edgescores
 

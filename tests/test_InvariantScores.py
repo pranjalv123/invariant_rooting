@@ -32,6 +32,18 @@ class TestInvariantScores5(unittest.TestCase):
         score = InvariantScores.inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
         self.assertEqual(score,0)
 
+    def test_inv52(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 52, 42, 292, 16, 7, 7, 36, 15, 30, 185, 14, 34, 45, 46, 91
+        score = InvariantScores.inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,709)
+
+    def test_inv53(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 52, 42, 292, 16, 7, 7, 36, 15, 30, 185, 14, 34, 45, 46, 91
+        score = InvariantScores.inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,760)
+
+
+
 class TestUnrootedDistributions(unittest.TestCase):
     def test_dist_counter(self):
         l = ["A", "B", "C", "D", "E"]
