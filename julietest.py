@@ -21,7 +21,7 @@ print S.as_newick_string()
 
 Taxa = [n.taxon.label for n in S.leaf_nodes()]
 
-edgelist = [e for e in S.postorder_edge_iter()]
+ES = [e for e in S.postorder_edge_iter()]
 
 INVDS = {v: k for k, v in DS.items()}
 
@@ -36,7 +36,7 @@ print ESBITS
 
 print 'there are'
 
-print len(edgelist)
+print len(ES)
 
 print 'edges in the species tree'
 
@@ -83,17 +83,17 @@ print t1-t0
 
 print 'to score the 4th edge'
 
-edgescores = [0.0 for i in range(len(edgelist)-1)]
+edgescores = [0.0 for i in range(len(ES)-1)]
 
 print 'there are this many edges in the species tree, because one is a dendropy artifact:'
 
-print len(edgelist)
+print len(ES)
 
 #print 'edge 0'
 #for i in range(len(edgelist)):
 
 #I'm stopping at the second to last edge because I think in the postorder traversal the final edge is redundant due to Dendropy's "seed node" structure
-for i in range(len(edgelist)-1):
+for i in range(len(ES)-1):
     se = InvariantScores.total_quintet_score(S,i,treelist)
     #edgescores.append(se)
     edgescores[i] = se
@@ -110,7 +110,7 @@ print edgescores
 
 print 'edgescores are indexed by the list'
 
-print edgelist
+print ES
 
 print 'minimum scoring edge is has index'
 
@@ -123,7 +123,7 @@ print minscore
 
 T = dendropy.Tree(S)
 
-T.reroot_at_edge(edgelist[minscore])
+T.reroot_at_edge(ES[minscore])
 
 print 'tree rooted at minscoring edge is'
 
@@ -131,6 +131,18 @@ print T.as_ascii_plot()
 H.write(str(T.as_ascii_plot()))
 
 H.close()
+
+Y = dendropy.Tree(S)
+    
+
+for i in range(len(edgescores)):
+    ES[i].length = edgescores[i]
+
+print 'unrooted tree with invariant scores for each edge is'
+
+print S.as_newick_string()
+
+
 #T = InvariantScores.find_best_edge_by_total_quintet_score(S,treelist)
 
 #print 'finding best rooting for species tree julies.genes.4.3.15.astral.tre from treelist julies.genes.4.3.15'
