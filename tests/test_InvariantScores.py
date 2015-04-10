@@ -32,6 +32,34 @@ class TestInvariantScores5(unittest.TestCase):
         score = InvariantScores.inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
         self.assertEqual(score,10)
 
+    def test_inv51_2(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 30, 2, 1, 10, 3, 12, 9, 3, 0, 4, 4, 13, 23, 7, 7
+        score = InvariantScores.inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,7)
+
+
+    def test_inv52(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 43, 2, 1, 0, 3, 11, 9, 3, 3, 8, 10, 50, 23, 14, 7
+        score = InvariantScores.inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,21)
+
+    def test_inv52_2(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 30, 2, 1, 10, 3, 12, 9, 3, 0, 4, 4, 13, 23, 7, 7
+        score = InvariantScores.inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,19)
+
+    def test_inv53(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 43, 2, 1, 0, 3, 11, 9, 3, 3, 8, 10, 50, 23, 14, 7
+        score = InvariantScores.inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,4)
+
+    def test_inv53_2(self):
+        u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 30, 2, 1, 10, 3, 12, 9, 3, 0, 4, 4, 13, 23, 7, 7
+        score = InvariantScores.inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        self.assertEqual(score,1)
+
+
+
 
 '''
     def test_inv51(self):

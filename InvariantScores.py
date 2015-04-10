@@ -178,7 +178,8 @@ def get_rooted_quintet(S,l,i):
 #find _best_edge_by_total_quintet_score(S,treelist):
 def total_quintet_score(S,i,treelist):
     #T needs to be S rooted at edge i!!!!
-    T = dendropy.Tree(S) 
+    T = dendropy.Tree(S)
+    T.deroot() 
     edgelist = [e for e in T.postorder_edge_iter()]
     #root_edge = edgelist[i]
     T.reroot_at_edge(edgelist[i])
@@ -203,6 +204,7 @@ def total_quintet_score(S,i,treelist):
 
 def find_best_edge_by_total_quintet_score(S,treelist):
     T = dendropy.Tree(S) 
+    T.deroot()
     edgelist = [e for e in T.postorder_edge_iter()]
     numedges = len(edgelist)
     Scores = [total_quintet_score(S,j,treelist) for j in range(numedges)] 
