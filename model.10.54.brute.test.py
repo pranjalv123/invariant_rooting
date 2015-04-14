@@ -91,7 +91,7 @@ print len(ES)
 
 #print 'edge 0'
 #for i in range(len(edgelist)):
-
+score={}
 #I'm stopping at the second to last edge because I think in the postorder traversal the final edge is redundant due to Dendropy's "seed node" structure
 for i in range(len(ES)-1):
     se = InvariantScores.total_quintet_score(S,i,treelist)
@@ -102,6 +102,7 @@ for i in range(len(ES)-1):
     H.write(str(edgescores))
     print 'edgescores are'
     print edgescores
+    score[ES[i].oid]=se
 
 
 print 'edgescores are'
@@ -142,6 +143,25 @@ print 'unrooted tree with invariant scores for each edge is'
 
 print S.as_newick_string()
 
+
+### FORMATTED OUTPUT #########
+INVDS_2 = {v.oid: k for k, v in DS.items()}
+print 'INVDS_2 '
+print INVDS_2 
+
+ES_key=[e.oid for e in ES]
+
+print '\n FINAL OUTPUT'
+print 'FORMAT edge.oid,score,split '
+for k in INVDS_2.keys():
+    if k in score.keys():
+        print k, ', score[',k,']=',score[k], ', split=',INVDS_2[k]
+    else:
+        print k ,'NOT FOUND'
+
+
+print '\n score ='
+print score
 
 #T = InvariantScores.find_best_edge_by_total_quintet_score(S,treelist)
 
