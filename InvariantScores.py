@@ -188,14 +188,14 @@ def total_quintet_score(S,i,treelist):
     Q1 = list(itertools.combinations(L,5))
     #print Q1 
     Q = [list(Q1[k]) for k in range(len(Q1))]
-    #print Q
+    print Q
     #Qtreeslist =[get_rooted_quintet(T,l,i) for l in Q]
     scorelist = []
-    print 'OOOGA BOOGA'
+    print 'calculating score for ' + str(i+1) + 'th edge'
     #for j in range(len(Qtreeslist)):
     for j in range(len(Q)):
         H = basic_score_quintet(T, Q[j],treelist)
-        print H
+        #print H
         scorelist.append(basic_score_quintet(T, Q[j],treelist))
     totalscore = sum(scorelist)
     print scorelist
