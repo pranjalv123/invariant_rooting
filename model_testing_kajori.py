@@ -12,7 +12,7 @@ S.update_splits()
 DS = S.split_edges
 
 print 'split_bitmasks are'
-print DS
+print DS.keys()
 
 print "species tree is"
 print S.as_newick_string()
@@ -32,36 +32,26 @@ print 'splits in order of edges are'
 print Splits
 
 #treelist = dendropy.TreeList.get_from_path('/Users/ruthdavidson/Downloads/10-taxon/model.10.5400000.0.000000037/01/truegenetrees','newick', taxon_set = S.taxon_set)
-treelist = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting_v2/10-taxon/model.10.5400000.0.000000037/01/truegenetrees','newick', taxon_set = S.taxon_set) #kajori
+treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting_v2/10-taxon/model.10.5400000.0.000000037/01/truegenetrees','newick', taxon_set = S.taxon_set) #kajori
 print 'type(treelist)',type(treelist)
 for i in range(len(treelist)):
     treelist[i].deroot()
 
 score=[]
+
 #I'm stopping at the second to last edge because I think in the postorder traversal the final edge is redundant due to Dendropy's "seed node" structure
-for i in range(len(ES)-1):
-    se = InvariantScores.total_quintet_score_kajori(S,i,treelist)
-    s = 'edgescores after edge ' + str(i) + 'are'
-    score.append(se)
-
-### FORMATTED OUTPUT #########
-ES_new=[e for e in S.postorder_edge_iter()]
-
+### FORMATTED OUTPUT ########
 print '\n FINAL OUTPUT'
-print 'FORMAT edge.oid,score,split '
-for index in range(len(ES_new)):
-        taxon=InvariantScores.taxon_with_split_edge(S,INVDS_2[index])
-        print index, ', score[',index,']=',score[index], ', split=',INVDS_2[index], taxon
+for i in range(len(ES)-1):
+    #print ' i ',i
+    (se,U,quintet)= InvariantScores.total_quintet_score_kajori(S,i,treelist)
+    taxon=InvariantScores.taxon_with_split_edge(S,ESBITS[i])
+    print 'index of edge in postorder_iteration=',i,' score = ',se, 'quintet = ',quintet,' taxon=',taxon, ' U =',U
+    
 
+print 'ES',len(ES)
+print(S.as_ascii_plot())
 
-print '\n score ='
-print score
-
-#T = InvariantScores.find_best_edge_by_total_quintet_score(S,treelist)
-
-#print 'finding best rooting for species tree julies.genes.4.3.15.astral.tre from treelist julies.genes.4.3.15'
-
-#:print T.as_newick_string()
 
 '''
 # START Unit testing for checking the following :-

@@ -120,6 +120,7 @@ def get_dist(l,treelist):
 def basic_score_quintet(S,l, treelist):
     T = dendropy.Tree(S)
     T.retain_taxa_with_labels(l)
+    
     T.ladderize(ascending=False)
     rooted_shape_str = T.as_newick_string()
     rooted_shape = ''
@@ -130,7 +131,6 @@ def basic_score_quintet(S,l, treelist):
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
-    #print U[0][1]
     scorefuncs= [inv51, inv52, inv53]
     if rooted_shape == shapes[0]:
         score = inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
@@ -145,6 +145,38 @@ def basic_score_quintet(S,l, treelist):
         score = 0
     return score
 
+#S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
+# the only difference between basic_score_quintet_kajori and basic_score_quintet is te last return sentence. I have added it to associated the
+#invariant scores with the edges
+def basic_score_quintet_kajori(S,l, treelist):
+    T = dendropy.Tree(S)
+    T.retain_taxa_with_labels(l)
+    T.ladderize(ascending=False)
+    rooted_shape_str = T.as_newick_string()
+    rooted_shape = ''
+    y = ['(', ')', ',']
+    for i in range(len(rooted_shape_str)):
+        if rooted_shape_str[i] in y:
+            rooted_shape = rooted_shape + rooted_shape_str[i]
+    shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    U = get_dist(l,treelist)
+    [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
+    
+    #print U[0][1]
+    scorefuncs= [inv51, inv52, inv53]
+    if rooted_shape == shapes[0]:
+        score = inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    elif rooted_shape == shapes[1]:
+        score = inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    elif rooted_shape == shapes[2]:
+        score = inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        #score_function = scorefuncs[shapes.index(rooted_shape)]
+        #score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+    else:
+        print 'error: quintet topology ' + T.as_newick_string() + '  not in list'
+        score = 0
+    return score,U[0][1]
+    
 #score_quintet takes a rooted quintet tree Q as input-is ladderized output of get_rooted_quintet
 #def score_quintet(Q,l, treelist):
     #rooted_shape_str = Q.as_newick_string()
@@ -214,8 +246,8 @@ def total_quintet_score_kajori(S,i,treelist):
     #T needs to be S rooted at edge i!!!!
     T = dendropy.Tree(S)
     node_label = {}
-    print 'node_labels'
-    print node_label
+    #print 'node_labels'
+    #print node_label
     nodelist = [n for n in T.postorder_node_iter()]
     for n in nodelist:
     	node_label[n.oid]=[]
@@ -241,7 +273,7 @@ def total_quintet_score_kajori(S,i,treelist):
             #print 'node_id',node_id,'type(node_id)',type(node_id),'node_id.oid',type(node_id.oid)
             #for each node label
             for label in node_label[node_id.oid]:
-                if label not in quintet:
+                if label not in quintet and  len(quintet)<5:
                     quintet.append(label)
             #for each node 
             if node_id.oid not in visited_node:
@@ -250,17 +282,13 @@ def total_quintet_score_kajori(S,i,treelist):
                     if n.oid not in visited_node:
                         q.put(n)
                         
-    print quintet
+    # quintet
     T.reroot_at_edge(e)
-    H = basic_score_quintet(T,quintet,treelist)
-    str1='['
-    for q in quintet:
-        #print q
-        str1=str1+str(q)
-        str1=str1+','
-    str1=str1+']'
-    #print 'str1',str1
-    return (H,str1)
+   
+   
+    H,U = basic_score_quintet_kajori(T,quintet,treelist)
+    #print ' score = ',H, 'quintet = ',quintet, ' U =',U
+    return (H,U,quintet)
 
 
 
@@ -411,6 +439,7 @@ def taxon_with_split_edge(S,input_no):
         print 'Split_BitMask NOT PRESENT IN INPUT TREE'
         return
     e=DS[input_no]  #returns the edge associated with the hash bitmask input_no
+    #print 'type (e)',type(e)
     node_id=T.mrca(split_bitmask=e.split_bitmask)
     #Queue Initialization
     taxon_set=[]
