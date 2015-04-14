@@ -6,7 +6,8 @@ import string
 from dendropy import treecalc
 import matrixmaker
 import numpy as np
-import copy
+import copy #by kajori
+import Queue #by kajori
 
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
@@ -398,7 +399,35 @@ def remove_split_bitmask_kajori(T,input_no):
     T.print_plot()
     return T
     
+    #input is a hash_bitamsk input_no, finds tha taxon set associated with it
+def taxon_with_split_edge(S,input_no):
+    T= dendropy.Tree(S)
+    T.deroot()
+    T.encode_splits()
+    T.update_splits()
+    DS = T.split_edges
+    if input_no not in DS.keys():
+        print 'Split_BitMask NOT PRESENT IN INPUT TREE'
+        return
+    e=DS[input_no]  #returns the edge associated with the hash bitmask input_no
+    node_id=T.mrca(split_bitmask=e.split_bitmask)
+    #Queue Initialization
+    taxon_set=[]
+    q = Queue.Queue()
+    q.put(node_id)
     
+    while (q.empty()==False):
+        node_id=q.get()
+        if (node_id.is_leaf()):
+            taxon_set.append(node_id.taxon.label)
+        else:
+            for n in node_id.child_nodes():
+                q.put(n)
+    #print taxon_set
+    return taxon_set
+
+        
+        
 
 ############### KAJORI END ###############   
     
