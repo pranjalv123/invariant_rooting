@@ -67,6 +67,7 @@ def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     score = score1 #+ score2
     return score
 
+#re-verified 4/15/15 that t_1 are in the same order as in appendix of allman-rhodes-degnan
 #l=list of taxon labels as strings from listofgenetreeschoices,listofgenetrees=dendropy TreeList
 def dist_counter(l,listofgenetrees):
     M = listofgenetrees.taxon_set
