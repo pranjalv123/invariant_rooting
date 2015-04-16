@@ -4,6 +4,7 @@ import dendropy
 import matrixmaker
 import pprint
 import numpy as np
+import copy 
 
 class TestInvariantScores3(unittest.TestCase):
     def test_inv3(self):
@@ -580,3 +581,79 @@ class TestDendropyTrees(unittest.TestCase):
 if __name__ == '__main__':
      unittest.main(
 )
+
+
+############### Unit test Kajori ############### 
+# START Unit testing for checking the following :-
+#  1) Check if split_hash_bitmask_changes with deep copying -PASSED
+#  2) Check if edge.oid with copying -FAILED
+#  3)checking the taxons associated with the splits_hash_bitmask do not change by copying -PASSED
+#  4) the splits_hash_bitmask associated with an edge donot change with copying
+class TestSplitHashBitMask(unittest.TestCase):
+    def test_split_hash_bitmask(self):
+        S_old = dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        S_old.deroot()
+        S_old.encode_splits()
+        S_old.update_splits()
+        DS_old = S_old.split_edges
+        #print 'TestSplitHashBitMask'
+        #print 'OLD split_bitmasks are'
+        #print DS_old.keys()
+
+        S_new=copy.deepcopy(S_old)
+        S_new.deroot()
+        S_new.encode_splits()
+        S_new.update_splits()
+        DS_new = S_new.split_edges
+        #print 'NEW split_bitmasks are'
+        #print DS_new.keys()
+
+        #checking assertions
+        self.assertEqual(len(set(DS_new.keys())-set(DS_old.keys())),0) # this checks DS_old.keys has all the elements of DS_new.keys
+        self.assertEqual(len(set(DS_old.keys())-set(DS_new.keys())),0) # this checks DS_new.keys has all the elements of DS_old.keys
+
+        #convert the keys to a list 
+        key_old=[ k for k in DS_old.keys()]
+        key_new=[ k for k in DS_new.keys()]
+        self.assertEqual(len(key_old),len(key_new))
+        # checking the taxons associated with the splits_hash_bitmask do not change by copying
+        for index in range(len(key_old)):
+            #print index
+            taxon_set_old=InvariantScores.taxon_with_split_edge(S_old,key_old[index])
+            #print taxon_set_old
+            taxon_set_new=InvariantScores.taxon_with_split_edge(S_new,key_new[index])
+            #print taxon_set_new
+            self.assertEqual(set(taxon_set_old),set(taxon_set_new))
+            self.assertEqual(len(taxon_set_old),len(taxon_set_new))
+            self.assertEqual(key_old[index],key_new[index])
+            
+        
+        '''
+        edgeset_old= [e for e in S_old.preorder_edge_iter()]
+        edgeset_new= [e for e in S_new.preorder_edge_iter()]
+        for index in range(len(edgeset_old)):
+            assert edgeset_old[index].oid==edgeset_new[index].oid #this assertion fails
+            print index,edgeset_old[index],edgeset_new[index]
+        '''
+# START Module testing for InvariantScores.taxon_with_split_edge 
+# taxon_with_split_edge takes as input a split_hash_bit_mask and returns taxons on on side of the bitmask
+class Test_Taxon_With_Split_Edge(unittest.TestCase):
+    def test_split_edge(self):
+        S= dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        S.encode_splits()
+        S.update_splits()
+        DS = S.split_edges
+
+        ES = [e for e in S.postorder_edge_iter()]
+        INVDS = {v: k for k, v in DS.items()}
+
+        #dict that gives bitmasks in same order as edge list should be
+        ESBITS = [INVDS[ES[i]] for i in range(len(ES))]
+        #S.print_plot()
+
+        output=[[]]
+        for k in  ESBITS:
+            output.append(InvariantScores.taxon_with_split_edge(S,k))
+        true_output=[[], ['A'], ['B'], ['A', 'B'], ['C'], ['D'], ['E'], ['D', 'E'], ['C', 'D', 'E'], ['F'], ['G'], ['F', 'G'], ['A', 'B', 'C', 'F', 'G', 'D', 'E']]
+        self.assertEqual(output,true_output)
+# End Module testing for InvariantScores.taxon_with_split_edge
