@@ -288,78 +288,75 @@ def total_quintet_score_kajori(S,i,treelist):
    
     H,U = basic_score_quintet_kajori(T,quintet,treelist)
     #print ' score = ',H, 'quintet = ',quintet, ' U =',U
+    assert sum(U)==1000
     return (H,U,quintet)
 
 
 
-#it takes quinters closet to it
-# this function finds the quinters closest to the root
-# S = TreeList ,i = index of edge under investigation  dir= tail/head
-def nearest_quintet_kajori(S,i,dir):
-    print 'nearest_quintet_kajori'
+# this function takes as input postion of an edge in postorder iterations and returns taxons on its both sides
+#unit test written for it
+def nearest_quintet_kajori(S,i):
     T= dendropy.Tree(S)
+    T.deroot()
+    T.encode_splits()
+    T.update_splits()
+    DS = T.split_edges
     edgelist = [e for e in T.postorder_edge_iter()]
+    INVDS = {v: k for k, v in DS.items()}
     
-    T.reroot_at_node(edgelist[i].tail_node)
-    print 'after rerooting'
-    T.print_plot()
-    T_head=copy.deepcopy(T)
-    T.prune_subtree(edgelist[i].head_node)
-    print 'after pruning'
-    T.print_plot()
-    nodelist = [n for n in T.level_order_node_iter()]
-    quintet_tail=[]
-    for node_id in nodelist:
-    	if (node_id.is_leaf()): 
-    	    quintet_tail.append(node_id.taxon.label)
-    if (dir =='tail'):
-        print 'quintet',quintet_tail[:5]
-        return quintet_tail[:5]
+    split_hash_bitmask=INVDS[edgelist[i]]
+    no_leaf_nodes=T.leaf_nodes()
+    #print ' split_hash_bitmask =', split_hash_bitmask
+    taxon_1=taxon_with_split_edge(T,split_hash_bitmask) #input is a hash_bitamsk input_no, finds tha taxon set associated with it
+    #print taxon_1,len(taxon_1)
+    
+    #boundary conditions check
+    if (len(taxon_1)==len(no_leaf_nodes)):
+        taxon_2=[]
+    elif (len(taxon_1)==0 ):
+         taxon_2=[node_id.taxon.label for node_id in no_leaf_nodes]
     else:
-        print '##########', dir,'##########'
-        print ' quintet_tail', quintet_tail
-        quintet=[]
-        if(edgelist[i].head_node.is_leaf()):
-            quintet.append(edgelist[i].head_node.taxon.label)
-            print ' line 294',type(quintet)
-            return quintet
-        nodelist_head = [n for n in T_head.level_order_node_iter()]
-        for node_id in nodelist_head:
-            if (node_id.is_leaf() and node_id.taxon.label not in quintet_tail): 
-    	        quintet.append(node_id.taxon.label)
-    	    if len(quintet)>5:
-    	        break
-    return quintet
+        T.prune_taxa_with_labels(taxon_1)
+        no_leaf_nodes=T.leaf_nodes()
+        taxon_2=[node_id.taxon.label for node_id in no_leaf_nodes]
+        
+    #print 'taxon_1',taxon_1, ' taxon_2',taxon_2
+    return taxon_1,taxon_2
     
-#This function scores an edge based on all five-element subsets of the leaf set of the species tree.  This will be replaced or 
-#modified to score an edge based on 2n-3 five-elements subsets where n is the numbers of species.  i indexes in the edges in 
-#it takes quinters closet to it
+# this function sort_list_distance_kajori takes as input a list of taxons 
+#and sorts them on the basis of their distance from the root
+#unit test written for it
+def sort_list_distance_kajori(T,taxon):
+    node_list=[n for n in T.level_order_node_iter()]
+    quintet=[]
+    for node in node_list:
+        if (node.is_leaf() and node.taxon.label in taxon and len(quintet)<5):
+            quintet.append(node.taxon.label)
+    return quintet
+
 # this function finds the quinters closest to the root
 # S = TreeList ,i = index of edge under investigation  dir= tail/head
-# nearest_quintet_kajori finds the neareast quintet.
 #total_quintet_score_distance_kajori along with nearest_quintet_kajori endsures that the edge is there in the induced subgraph 
 def total_quintet_score_distance_kajori(S,i,treelist):
-
     T= dendropy.Tree(S)
-    print 'before pruning'
-    T.print_plot()
+    T.deroot()
+    taxon_1,taxon_2=nearest_quintet_kajori(copy.deepcopy(S),i)
     
-    S1=copy.deepcopy(S)
-    S2=copy.deepcopy(S)
-
-    quintet_1=nearest_quintet_kajori(S1,i,'tail')
-    #print 'quintet1' ,quintet_1
+    edgelist_postorder = [e for e in T.postorder_edge_iter()]
+    for e in edgelist_postorder:
+        e.length=1
+    T.reroot_at_edge(edgelist_postorder[i])
+    print 'taxon_1,taxon_2',taxon_1,taxon_2
     
+    quintet_1=sort_list_distance_kajori(T,taxon_1)
+    quintet_2=sort_list_distance_kajori(T,taxon_2)
     
-    quintet_2=nearest_quintet_kajori(S2,i,'head')
-    #print 'quintet2 ',quintet_2,type(quintet_2)
-    
-    # merge sort of the quintets on the basis of distance
-    edgelist = [e for e in T.postorder_edge_iter()]
-    T.reroot_at_node(edgelist[i].tail_node)
+    print 'quintet_1,quintet_2',quintet_1,quintet_2
     quintet=[]
     (flag_1,flag_2,pos_1,pos_2)=(0,0,0,0)
     while (pos_1+pos_2 < 5 and pos_1 < len(quintet_1)  and pos_2 < len(quintet_2) ):
+        #print 'quintet_1[pos_1] ', quintet_1[pos_1], T.find_node_with_taxon_label(quintet_1[pos_1]).taxon.label
+        #print ' .distance_from_root() ', T.find_node_with_taxon_label(quintet_1[pos_1]).distance_from_root()
         dist_1=T.find_node_with_taxon_label(quintet_1[pos_1]).distance_from_root()
         dist_2=T.find_node_with_taxon_label(quintet_2[pos_2]).distance_from_root()
         if(dist_1<dist_2):
@@ -381,51 +378,41 @@ def total_quintet_score_distance_kajori(S,i,treelist):
     
     #print 'pos_1,pos_2,len(quintet)', pos_1,pos_2,len(quintet)
     if(flag_1==0):
-        quintet[4]=quintet1[0]
+        quintet[4]=quintet_1[0]
     elif (flag_2==0):
-        quintet[4]=quintet2[0]
-    print 'final quintet',quintet,'len',len(quintet)
+        quintet[4]=quintet_2[0]
+    #print 'final quintet',quintet,'len',len(quintet)
     
     T= dendropy.Tree(S)
-    T.reroot_at_edge(edgelist[i])
-    H= basic_score_quintet(T,quintet,treelist)
-    str1='['
-    for q in quintet:
-        #print q
-        str1=str1+str(q)
-        str1=str1+','
-    str1=str1+']'
-    #print 'str1',str1
-    print 'final ans ',H,str1
-    #return (H,str1)
+    T.reroot_at_edge(edgelist_postorder[i])
+    H,U = basic_score_quintet_kajori(T,quintet,treelist)
+    #assert sum(U)==1000
+    return (H,U,quintet)            
     
-    
-    #find the edge id associated with the outlier i.e. node 0
-def find_edge_associated_with_outlier_kajori(S):
-    print 'find_edge_associated_with_outlier'
+    #find the edge id associated with the outlier , label indicates the taxon label of the outlier node
+def find_edge_associated_with_outlier_kajori(S, label):
+    #print 'find_edge_associated_with_outlier'
     T = dendropy.Tree(S)
-    node_oid=T.find_node_with_taxon_label('0')
-    edge_with_0=node_oid.incident_edges()
-    print 'edge_with_0',edge_with_0[0].oid
+    node_oid=T.find_node_with_taxon_label(label)
+    edge=node_oid.incident_edges()
     edgelist = [e.oid for e in T.postorder_edge_iter()]
-    pos_edge_with_0=edgelist.index(edge_with_0[0].oid) 
-    return pos_edge_with_0
+    pos_edge=edgelist.index(edge[0].oid) 
+    return pos_edge
     # Removes nodes that belong to the input_bitmask from S
    
    #input is a bitamsk input_no, it removes the edge associated with it
 def remove_split_bitmask_kajori(T,input_no):
-    T.deroot()
     T.encode_splits()
     T.update_splits()
     DS = T.split_edges
     if input_no not in DS.keys():
-        print 'Split_BitMask NOT PRESENT IN INPUT TREE'
+        print 'Split_BitMask NOT PRESENT IN INPUT TREE',DS.keys()
         return
     e=DS[input_no]  #returns the edge associated with the hash bitmask input_no
-    print 'type (e)',type(e)
+    #print 'type (e)',type(e)
     node=T.mrca(split_bitmask=e.split_bitmask)
     T.prune_subtree(node)
-    T.print_plot()
+    #T.print_plot()
     return T
     
     #input is a hash_bitamsk input_no, finds tha taxon set associated with it
