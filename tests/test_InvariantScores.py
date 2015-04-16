@@ -657,3 +657,80 @@ class Test_Taxon_With_Split_Edge(unittest.TestCase):
         true_output=[[], ['A'], ['B'], ['A', 'B'], ['C'], ['D'], ['E'], ['D', 'E'], ['C', 'D', 'E'], ['F'], ['G'], ['F', 'G'], ['A', 'B', 'C', 'F', 'G', 'D', 'E']]
         self.assertEqual(output,true_output)
 # End Module testing for InvariantScores.taxon_with_split_edge
+ 
+# START Module testing for InvariantScores.total_quintet_score_distance_kajori
+# total_quintet_score_distance_kajori takes as input an edge e and returns taxons closest to e
+class Test_Total_Quintet_Score_Distance(unittest.TestCase):
+    
+    def test_nearest_quintet_kajori(self):
+        S= dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        ES = [e for e in S.postorder_edge_iter()]
+        output=[[]]
+        for i in range(len(ES)):
+            taxon_1,taxon_2=InvariantScores.nearest_quintet_kajori(S,i)
+            #print 'list(set(taxon_1) & set(taxon_2)',list(set(taxon_1) & set(taxon_2))
+            self.assertEqual(list(set(taxon_1) & set(taxon_2)),[]) #intersection of taxon_1 and taxon_2 is empty
+            self.assertEqual(set(taxon_1) | set(taxon_2),set(['A', 'B', 'C', 'F', 'G', 'D', 'E'])) #intersection of taxon_1 and taxon_2 is empty
+        #self.assertEqual(output,true_output)
+        
+    def test_sort_list_distance_kajori(self):
+        S= dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        ES = [e for e in S.postorder_edge_iter()]
+        taxon_1,taxon_2=InvariantScores.nearest_quintet_kajori(S,10)
+        self.assertEqual(set(taxon_2),set(['A', 'B', 'C', 'D', 'E'])) 
+        S.reroot_at_edge(ES[10])
+        quintet=InvariantScores.sort_list_distance_kajori(S,taxon_2)
+        self.assertEqual(quintet,['A', 'B', 'C', 'D', 'E']) 
+    
+    def test_find_edge_associated_with_outlier_kajori(self):
+        S= dendropy.Tree.get_from_string('(((A,B),(C,(D,E)),(F,G)),H)', 'newick')
+        pos=InvariantScores.find_edge_associated_with_outlier_kajori(S,'H')
+        #print 'test_find_edge_associated_with_outlier_kajori',pos
+        taxon_1,taxon_2=InvariantScores.nearest_quintet_kajori(S,pos)
+        if (taxon_2==['H'] or taxon_1==['H'] ):
+            print taxon_1,taxon_2
+            self.assertTrue(False)
+    
+    
+    
+    def test_remove_split_bitmask_kajori(self):
+        S = dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        S.deroot()
+        S.encode_splits()
+        S.update_splits()
+        DS = S.split_edges
+        ES = [e for e in S.postorder_edge_iter()]
+        INVDS = {v: k for k, v in DS.items()}
+        #print ' test_remove_split_bitmask_kajori DS keys =',DS.keys()
+        #dict that gives bitmasks in same order as edge list should be
+        ESBITS = [INVDS[ES[i]] for i in range(len(ES))]
+        #true_output=[[], ['A'], ['B'], ['A', 'B'], ['C'], ['D'], ['E'], ['D', 'E'], ['C', 'D', 'E'], ['F'], ['G'], ['F', 'G'], ['A', 'B', 'C', 'F', 'G', 'D', 'E']]
+        
+        for k in range(len(ES)-1):
+            #print 'ESBITS[k]',ESBITS[k]
+            taxon_1=InvariantScores.taxon_with_split_edge(S,ESBITS[k])
+        
+            S_new=InvariantScores.remove_split_bitmask_kajori(copy.deepcopy(S),ESBITS[k])
+            taxon_2=[ n.taxon.label for n in S_new.leaf_nodes()  ]
+            
+            #print ' taxon_1 , taxon_2 ',taxon_1,taxon_2
+            self.assertEqual(len(set(taxon_1) & set(taxon_2)),0) 
+            self.assertEqual(set(taxon_1) | set(taxon_2),set(['A', 'B', 'C', 'F', 'G', 'D', 'E'])) 
+    
+    
+    def test_total_quintet_score_distance_kajori(self):
+        S= dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        tree1 = dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        tree2 = dendropy.Tree.get_from_string('(((A,B),C),D,(E,(F,G)))', 'newick', taxon_set = tree1.taxon_set)
+        tree3 = dendropy.Tree.get_from_string('(((A,B),C),(D,E),(F,G))', 'newick', taxon_set = tree1.taxon_set)
+        treelist = dendropy.TreeList([tree1, tree2, tree3])
+        
+        ES = [e for e in S.postorder_edge_iter()]
+       
+        quintet=InvariantScores.total_quintet_score_distance_kajori(S,2,treelist)
+        print quintet
+        #self.assertEqual(quintet,['A', 'B', 'C', 'D', 'E']) 
+    
+    
+   
+# End Module testing for InvariantScores.taxon_with_split_edge
