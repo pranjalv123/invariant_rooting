@@ -731,6 +731,16 @@ class Test_Total_Quintet_Score_Distance(unittest.TestCase):
         print quintet
         #self.assertEqual(quintet,['A', 'B', 'C', 'D', 'E']) 
     
-    
+    def test_find_induced_edge_indexes(self):
+        S= dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
+        edgelist = [e for e in S.postorder_edge_iter()]
+        print 'test_find_induced_edge_indexes len(edgelist)=',len(edgelist)
+        quintet=['A','C','F','G','E']
+        edge_list=InvariantScores.find_induced_edge_indexes(S,quintet)
+        self.assertEqual(set(edge_list),set([0,2,3,5,6,7,8,9,10]))
+        
+        quintet=['A','B','D','C','E']
+        edge_list=InvariantScores.find_induced_edge_indexes(S,quintet)
+        self.assertEqual(set(edge_list),set([0,1,2,3,4,5,6,7]))
    
 # End Module testing for InvariantScores.taxon_with_split_edge

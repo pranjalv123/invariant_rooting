@@ -444,7 +444,50 @@ def taxon_with_split_edge(S,input_no):
     return taxon_set
 
         
-        
+#given a quintet finds the edges induced by the quintet
+#outputs the edge indexes in the post_order iteration
+def find_induced_edge_indexes(S,quintet):
+    T= dendropy.Tree(S)
+    T.encode_splits()
+    T.update_splits()
+    DS = T.split_edges
+    ES = [e for e in T.postorder_edge_iter()]
+    INVDS = {v: k for k, v in DS.items()}
+    
+    ESBITS = [INVDS[ES[i]] for i in range(len(ES))] #dict that gives bitmasks in same order as edge list should be
+    edges_included=[]
+    taxon_set=[n.taxon.label for n in T.leaf_nodes()]
+    pos=0
+    for split_hash_bitmask in ESBITS:
+        taxon_1=taxon_with_split_edge(T,split_hash_bitmask)
+        #ensures that the elements from the quintet are on both sides on the edge
+        if ((len(set(taxon_1) & set(quintet))>0) and ( len((set(taxon_set)-set(taxon_1)) & set(quintet))>0)):
+            edges_included.append(pos)
+        pos=pos+1
+    print 'edges_included =',edges_included
+    return edges_included
+            
+#given a quintet returns the scores of the induced edges in the postorder_edge_iter
+#if the edge index in the postorder_edge_iter is not induced the score is reported as -99
+def edge_score_on_quintet(S,quintet,treelist):
+    T= dendropy.Tree(S)
+    T.deroot()
+    ES = [e for e in T.postorder_edge_iter()]
+    edge_list=find_induced_edge_indexes(S,quintet)
+    score=[]
+    for index in range(len(ES)-1):
+        T_copy=copy.deepcopy(T)
+        if (index in edge_list):
+            print 'index=',index, type(ES[index])
+            T_copy.reroot_at_edge(ES[index])
+            H,U = basic_score_quintet_kajori(T_copy,quintet,treelist)
+            #assert sum(U)==1000
+        else:
+            print 'index=',index
+            H=-99
+        score.append(H)
+    return score  
+    
 
 ############### KAJORI END ###############   
     
