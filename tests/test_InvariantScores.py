@@ -742,5 +742,13 @@ class Test_Total_Quintet_Score_Distance(unittest.TestCase):
         quintet=['A','B','D','C','E']
         edge_list=InvariantScores.find_induced_edge_indexes(S,quintet)
         self.assertEqual(set(edge_list),set([0,1,2,3,4,5,6,7]))
+        
+        #test file for edge labels
+    def test_my_print_tree(self):
+        tree_str = "(A, (B, (C, (D, E))));"
+        S = dendropy.Tree.get_from_string(tree_str, "newick")
+        print 'test_my_print_tree'
+        output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+'R_avian_species_tree_wih_score.trees'
+        InvariantScores.my_print_tree(S,[5,6,7,8,-99,0,-99,-99,-99],output_filename)
    
 # End Module testing for InvariantScores.taxon_with_split_edge
