@@ -122,6 +122,7 @@ def basic_score_quintet(S,l, treelist):
     T.retain_taxa_with_labels(l)
     
     T.ladderize(ascending=False)
+    #here change the order of the entries of l to match what happened to them in ladderize
     rooted_shape_str = T.as_newick_string()
     rooted_shape = ''
     y = ['(', ')', ',']
@@ -129,6 +130,7 @@ def basic_score_quintet(S,l, treelist):
         if rooted_shape_str[i] in y:
             rooted_shape = rooted_shape + rooted_shape_str[i]
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    #Here is where l needs to be reordered to match order of T after ladderizing and retain_taxa blah blah 
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     scorefuncs= [inv51, inv52, inv53]
@@ -148,18 +150,21 @@ def basic_score_quintet(S,l, treelist):
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 # the only difference between basic_score_quintet_kajori and basic_score_quintet is te last return sentence. I have added it to associated the
 #invariant scores with the edges
-def basic_score_quintet_kajori(S,l, treelist):
-    T = dendropy.Tree(S)
-    T.retain_taxa_with_labels(l)
-    T.ladderize(ascending=False)
-    rooted_shape_str = T.as_newick_string()
-    rooted_shape = ''
-    y = ['(', ')', ',']
-    for i in range(len(rooted_shape_str)):
-        if rooted_shape_str[i] in y:
-            rooted_shape = rooted_shape + rooted_shape_str[i]
-    shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
-    U = get_dist(l,treelist)
+#def basic_score_quintet_kajori(S,l, treelist):
+    #T = dendropy.Tree(S)
+    #T.retain_taxa_with_labels(l)
+    #T.ladderize(ascending=False)
+    #rooted_shape_str = T.as_newick_string()
+    #rooted_shape = ''
+    #y = ['(', ')', ',']
+    #for i in range(len(rooted_shape_str)):
+        #if rooted_shape_str[i] in y:
+            #rooted_shape = rooted_shape + rooted_shape_str[i]
+    #shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    #U = get_dist(l,treelist)
+
+#basic_score...kajori was for asserting freqs always added to 1000
+
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     
     #print U[0][1]
