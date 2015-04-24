@@ -120,7 +120,7 @@ def get_dist(l,treelist):
     return [dist, garbage, incompletes]
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
-def basic_score_quintet(S,l, treelist):
+def basic_score_quintet(S,l,treelist):
     T = dendropy.Tree(S)
     T.retain_taxa_with_labels(l)
     

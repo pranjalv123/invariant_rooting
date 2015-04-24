@@ -119,21 +119,29 @@ class TestUnrootedDistributions(unittest.TestCase):
         L = dendropy.TreeList.get_from_string('[&R] (((1,4),2),(3,5)); [&R] ((((1,2),3),5),4); [&R] (((4,2),(1,3)),5);', 'newick')
         l = ['4','1','2','5','3']
         D = InvariantScores.get_dist(l,L)
-        print D
+        #print D
         self.assertEqual(D[0][1],[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0])
         self.assertEqual(D[1],[])
         self.assertEqual(D[2],[])
    
- 
     def test_get_dist3(self):
         L = dendropy.TreeList.get_from_string('[&U] (((1,4),2),(3,5)); [&U] ((((1,2),3),5),4); [&U] (((4,2),(1,3)),5);', 'newick')
         l = ['4','1','2','5','3']
         D = InvariantScores.get_dist(l,L)
-        print D
+        #print D
         self.assertEqual(D[0][1],[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0])
         self.assertEqual(D[1],[])
         self.assertEqual(D[2],[])
-            
+    
+    def test_get_dist4(self):
+        L = dendropy.TreeList.get_from_string('[&R] ((3,5),(2,(1,4))); [&U] (4,(5,(3,(1,2)))); [&U] (5,((4,2),(1,3)));', 'newick')
+        l = ['4','1','2','5','3']
+        D = InvariantScores.get_dist(l,L)
+        #print D
+        self.assertEqual(D[0][1],[1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0])
+        self.assertEqual(D[1],[])
+        self.assertEqual(D[2],[])
+             
     def test_basic_score_quintet(self):
         tree1 = dendropy.Tree.get_from_string('((A,B),(C,(D,E)),(F,G))', 'newick')
         tree2 = dendropy.Tree.get_from_string('(((A,B),C),D,(E,(F,G)))', 'newick', taxon_set = tree1.taxon_set)
@@ -152,6 +160,14 @@ class TestUnrootedDistributions(unittest.TestCase):
         #u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15 = 
 #class TestBasicScoreQuintetLadderize(unittest.TestCase):
     #def testTaxonOrderCaterpillar(self):
+
+    def test_basic_score_quintet2(self):
+        S = dendropy.Tree.get_from_string('[&R] ((3,5),(2,(1,4)));', 'newick')
+        print 'hello this is RUUUUUUTH'
+        L = dendropy.TreeList.get_from_string('[&R] ((3,5),(2,(1,4))); [&U] (4,(5,(3,(1,2)))); [&U] (5,((4,2),(1,3)));', 'newick')
+        l = ['1','2','3','4','5']
+        score = InvariantScores.basic_score_quintet(S,l,L)
+        self.assertEqual(score,2)
         
 class TestQuartetStuff(unittest.TestCase):
     def testQuartetDict(self):
