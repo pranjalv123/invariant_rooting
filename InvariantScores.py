@@ -8,6 +8,8 @@ import matrixmaker
 import numpy as np
 import copy #by kajori
 import Queue #by kajori
+import re  #by kajori
+
 
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
@@ -130,7 +132,18 @@ def basic_score_quintet(S,l, treelist):
         if rooted_shape_str[i] in y:
             rooted_shape = rooted_shape + rooted_shape_str[i]
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    
     #Here is where l needs to be reordered to match order of T after ladderizing and retain_taxa blah blah 
+    T_temp=copy.deepcopy(T.as_newick_string())
+    #re.sub(':[^,]+,', '', T_temp)
+    #print '\n re.sub =',re.sub(':[^,]+,', ',', T_temp)
+    temp=re.sub(':[^\)]+', '',re.sub(':[^,]+,', ',', T_temp)) 
+    temp=re.sub('\(','',re.sub('\)', '',temp))
+    print  '\n re    =',temp
+    ordered_quintet=[i for i in re.split(',',temp)]
+    print  '\n ordered_quintet    =',ordered_quintet , type(ordered_quintet)
+    
+    print '\n T_temp =',T_temp
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     scorefuncs= [inv51, inv52, inv53]
@@ -472,14 +485,14 @@ def edge_score_on_quintet(S,quintet,treelist):
         if (index in edge_list):
             #print 'index=',index, type(ES[index])
             T_copy.reroot_at_edge(ES[index])
-            H,U = basic_score_quintet_kajori(T_copy,quintet,treelist)
+            H= basic_score_quintet(T_copy,quintet,treelist)
             
             score.append(H)
         else:
             score.append(-99)
             #assert sum(U)==1000
      
-    return score,U
+    return score#,U
 
 #it takes as input a tree and prints the tree with the edge scores 
 #if score=True, output= edge_index_in_post_order_iteration/score_of _that_edge

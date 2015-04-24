@@ -63,10 +63,11 @@ for mc in model_coditions:
         quintet=['0','3','5','7','8']
         print 'quintet',quintet
     
-        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist)
+        score=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist)
         print 'score = ',score
-        print 'U=',U
+        #print 'U=',U
         
+        '''
         output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_10_taxon_tree_wih_score_outgroup_in_quintet.trees'
         InvariantScores.my_print_tree(copy.deepcopy(S),score,output_filename)
         
@@ -74,7 +75,8 @@ for mc in model_coditions:
         f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
         f_write.write(str(U))
         print 'writted to file'
-f_write.close()
+        '''
+#f_write.close()
    
   
 
