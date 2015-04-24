@@ -142,10 +142,10 @@ def basic_score_quintet(S,l, treelist):
     print '\n ************************************ \n T_temp =',T_temp
     print  '\n re    =',temp
     ordered_quintet=[i for i in re.split(',',temp)]
-    print  '\n ordered_quintet    =',ordered_quintet , type(ordered_quintet)
-    assert(set(l) | set(ordered_quintet)==set(l))
-    
+    print  '\n ordered_quintet    =',ordered_quintet
+    assert((set(l) | set(ordered_quintet))==set(l))
     l=ordered_quintet
+
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     scorefuncs= [inv51, inv52, inv53]
