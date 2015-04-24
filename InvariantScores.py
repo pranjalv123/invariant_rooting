@@ -106,6 +106,7 @@ def get_dist(l,treelist):
         smalltree = copy.deepcopy(treelist[i])
         if len(list(smalltree.leaf_nodes())) == len(labels):
             smalltree.retain_taxa_with_labels(l)
+            smalltree.deroot()
             smalltree.update_splits()
             trace = [dendropy.treecalc.symmetric_difference(smalltree,dist[0][j]) for j in range(15)]
             if trace.count(0) > 1:
@@ -165,21 +166,21 @@ def basic_score_quintet(S,l, treelist):
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 # the only difference between basic_score_quintet_kajori and basic_score_quintet is the last return sentence. I have added it to associated the
 #invariant scores with the edges
-#def basic_score_quintet_kajori(S,l, treelist):
-    #T = dendropy.Tree(S)
-    #T.retain_taxa_with_labels(l)
-    #T.ladderize(ascending=False)
-    #rooted_shape_str = T.as_newick_string()
-    #rooted_shape = ''
-    #y = ['(', ')', ',']
-    #for i in range(len(rooted_shape_str)):
-        #if rooted_shape_str[i] in y:
-            #rooted_shape = rooted_shape + rooted_shape_str[i]
-    #shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
-    #U = get_dist(l,treelist)
+def basic_score_quintet_kajori(S,l, treelist):
+    T = dendropy.Tree(S)
+    T.retain_taxa_with_labels(l)
+    T.ladderize(ascending=False)
+    rooted_shape_str = T.as_newick_string()
+    rooted_shape = ''
+    y = ['(', ')', ',']
+    for i in range(len(rooted_shape_str)):
+        if rooted_shape_str[i] in y:
+            rooted_shape = rooted_shape + rooted_shape_str[i]
+    shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    U = get_dist(l,treelist)
 
 #basic_score...kajori was for asserting freqs always added to 1000
-
+#uncommented to get tests to pass 4/24/15
     
 #score_quintet takes a rooted quintet tree Q as input-is ladderized output of get_rooted_quintet
 #def score_quintet(Q,l, treelist):
