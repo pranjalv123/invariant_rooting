@@ -3,7 +3,8 @@ import InvariantScores
 import time
 import copy 
 
-model_coditions=['model.10.5400000.0.000000037','model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
+#model_coditions=['model.10.5400000.0.000000037','model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
+model_coditions=['model.10.5400000.0.000000037']
 # the model_coditions are arranged from lowest to highest ILS
 
 '''

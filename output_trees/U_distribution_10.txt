@@ -72,3 +72,12 @@
 
  10-taxon datatset/ model condition - model.10.200000.0.000001000/R1/ 
  U = [179, 32, 25, 170, 37, 29, 32, 35, 38, 35, 38, 34, 194, 53, 69]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [249, 0, 0, 499, 0, 0, 0, 0, 0, 0, 0, 0, 252, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [249, 0, 0, 499, 0, 0, 0, 0, 0, 0, 0, 0, 252, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [249, 0, 0, 499, 0, 0, 0, 0, 0, 0, 0, 0, 252, 0, 0]

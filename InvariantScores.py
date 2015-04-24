@@ -146,7 +146,7 @@ def basic_score_quintet(S,l, treelist):
     return score
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
-# the only difference between basic_score_quintet_kajori and basic_score_quintet is te last return sentence. I have added it to associated the
+# the only difference between basic_score_quintet_kajori and basic_score_quintet is the last return sentence. I have added it to associated the
 #invariant scores with the edges
 def basic_score_quintet_kajori(S,l, treelist):
     T = dendropy.Tree(S)
@@ -159,6 +159,8 @@ def basic_score_quintet_kajori(S,l, treelist):
         if rooted_shape_str[i] in y:
             rooted_shape = rooted_shape + rooted_shape_str[i]
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
+    
+    print 'rooted_shape',rooted_shape, 'T',T.as_newick_string(),type(T.as_newick_string()),' l',l
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     
@@ -346,12 +348,12 @@ def total_quintet_score_distance_kajori(S,i,treelist):
     for e in edgelist_postorder:
         e.length=1
     T.reroot_at_edge(edgelist_postorder[i])
-    print 'taxon_1,taxon_2',taxon_1,taxon_2
+    #print 'taxon_1,taxon_2',taxon_1,taxon_2
     
     quintet_1=sort_list_distance_kajori(T,taxon_1)
     quintet_2=sort_list_distance_kajori(T,taxon_2)
     
-    print 'quintet_1,quintet_2',quintet_1,quintet_2
+    #print 'quintet_1,quintet_2',quintet_1,quintet_2
     quintet=[]
     (flag_1,flag_2,pos_1,pos_2)=(0,0,0,0)
     while (pos_1+pos_2 < 5 and pos_1 < len(quintet_1)  and pos_2 < len(quintet_2) ):
@@ -463,6 +465,9 @@ def find_induced_edge_indexes(S,quintet):
         #ensures that the elements from the quintet are on both sides on the edge
         if ((len(set(taxon_1) & set(quintet))>0) and ( len((set(taxon_set)-set(taxon_1)) & set(quintet))>0)):
             edges_included.append(pos)
+            #print 'taxon_1 =',taxon_1,' pos ',pos
+        #else:
+            #print 'taxon_1 =',taxon_1
         pos=pos+1
     print 'edges_included =',edges_included
     return edges_included
@@ -473,20 +478,47 @@ def edge_score_on_quintet(S,quintet,treelist):
     T= dendropy.Tree(S)
     T.deroot()
     ES = [e for e in T.postorder_edge_iter()]
-    edge_list=find_induced_edge_indexes(S,quintet)
+    edge_list=find_induced_edge_indexes(copy.deepcopy(S),quintet)
     score=[]
     for index in range(len(ES)-1):
         T_copy=copy.deepcopy(T)
         if (index in edge_list):
-            print 'index=',index, type(ES[index])
+            #print 'index=',index, type(ES[index])
             T_copy.reroot_at_edge(ES[index])
             H,U = basic_score_quintet_kajori(T_copy,quintet,treelist)
-            #assert sum(U)==1000
+            
+            score.append(H)
         else:
-            print 'index=',index
-            H=-99
-        score.append(H)
-    return score  
+            score.append(-99)
+            #assert sum(U)==1000
+     
+    return score,U
+
+#it takes as input a tree and prints the tree with the edge scores 
+#if score=True, output= edge_index_in_post_order_iteration/score_of _that_edge
+#else output= edge_index_in_post_order_iteration
+#since it was not possible to print the edge labels in ascii,
+# they are printed as node labels 
+# the node labels show the labels of the edges from its parent node
+def my_print_tree(S_original,score,file_name):
+    
+    S=copy.deepcopy(S_original) #so that we do not change the labels of the original tree
+    S.deroot()
+    node_list=[n for n in S.postorder_node_iter()]
+    print 'len', len(score), len(node_list)
+    for pos in range(0,len(node_list)-1): #I'm stopping at the second to last edge because I think in the postorder traversal the final node is redundant due to Dendropy's "seed node" structure
+        #print pos,score[pos],type(node_list[pos])
+       
+        if( score[pos]==-99 and node_list[pos].is_leaf()): 
+            node_list[pos].taxon.label=node_list[pos].taxon.label+'/'+str(pos)
+        elif( score[pos]!=-99 and node_list[pos].is_leaf()): 
+            node_list[pos].taxon.label=node_list[pos].taxon.label+'/'+str(pos)+'/'+str(score[pos])
+        elif( score[pos]==-99 and node_list[pos].is_internal()): 
+            node_list[pos].label=str(pos)
+        else:
+            node_list[pos].label=str(pos)+'/'+str(score[pos])
+    S.print_plot(show_internal_node_labels=True)
+    S.write_to_path(file_name,'newick')
     
 
 ############### KAJORI END ###############   
