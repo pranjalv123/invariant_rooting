@@ -472,7 +472,7 @@ def find_induced_edge_indexes(S,quintet):
         #else:
             #print 'taxon_1 =',taxon_1
         pos=pos+1
-    print 'edges_included =',edges_included
+    #print 'edges_included =',edges_included
     return edges_included
             
 #given a quintet returns the scores of the induced edges in the postorder_edge_iter
@@ -508,7 +508,7 @@ def my_print_tree(S_original,score,file_name):
     S=copy.deepcopy(S_original) #so that we do not change the labels of the original tree
     S.deroot()
     node_list=[n for n in S.postorder_node_iter()]
-    print 'len', len(score), len(node_list)
+    #print 'len', len(score), len(node_list)
     for pos in range(0,len(node_list)-1): #I'm stopping at the second to last edge because I think in the postorder traversal the final node is redundant due to Dendropy's "seed node" structure
         #print pos,score[pos],type(node_list[pos])
        
@@ -527,31 +527,17 @@ def my_print_tree(S_original,score,file_name):
 #it takes as input a tree, the quintet, 
 #the scores associated with those edges
 # Output : it removes those edges wich are not part of the induced edge subset.
-def format_tree(S,quintet,score):
-    print 'inside format trees'
-    T= dendropy.Tree(my_print_tree(S,score,'dump.trees'))
-    T.encode_splits()
-    T.update_splits()
-    DS = T.split_edges
-    ES = [e for e in T.postorder_edge_iter()]
-    INVDS = {v: k for k, v in DS.items()}
-    
-    ESBITS = [INVDS[ES[i]] for i in range(len(ES))] #dict that gives bitmasks in same order as edge list should be
-    for split_hash_bitmask in ESBITS:
-        taxon=taxon_with_split_edge(T,split_hash_bitmask)
-        if ( len(set(taxon) & set(quintet))==0):
-            #Returns the shallowest node in the tree (the node furthest from the root, 
-            #or start_node, in the direction toward the tips of the tree) that has all of the taxa that:
-            #are specified by the split bitmask given by the keyword argument split_bitmask
-            node=T.mcra(split_bitmask=split_hash_bitmask)
-            # Removes subtree starting at node from tree.
-            #If the old root of the tree had an outdegree of 2, 
-            #then after this operation, it will have an outdegree of one. 
-            #In this case, unless delete_outdegree_one is False, then it will be removed from the tree.
-            T.prune_subtree(node, update_splits=False, delete_outdegree_one=False)
-    print 'after pruning'
-    T.print_plot(show_internal_node_labels=True)
-    #T.write_to_path(file_name,'newick')
+def format_tree(S,quintet,score,filename):
+    S.retain_taxa_with_labels(quintet,delete_outdegree_one=False)
+    #print score
+    while -99 in score: score.remove(-99)
+    #print score
+    node_list=[n for n in S.postorder_node_iter()]
+    for pos in range(len(node_list)-1):
+        if (node_list[pos].is_leaf()):node_list[pos].taxon.label=node_list[pos].taxon.label+'/'+str(score[pos])
+        else:node_list[pos].label=str(score[pos])
+    S.print_plot(show_internal_node_labels=True)
+    S.write_to_path(filename,'newick')
     
 
 ############### KAJORI END ###############   
