@@ -140,10 +140,10 @@ def basic_score_quintet(S,l,treelist):
     #print '\n re.sub =',re.sub(':[^,]+,', ',', T_temp)
     temp=re.sub(':[^\)]+', '',re.sub(':[^,]+,', ',', T_temp)) 
     temp=re.sub('\(','',re.sub('\)', '',temp))
-    print '\n ************************************ \n T_temp =',T_temp
-    print  '\n re    =',temp
+    #print '\n ************************************ \n T_temp =',T_temp
+    #print  '\n re    =',temp
     ordered_quintet=[i for i in re.split(',',temp)]
-    print  '\n ordered_quintet    =',ordered_quintet
+    #print  '\n ordered_quintet    =',ordered_quintet
     assert((set(l) | set(ordered_quintet))==set(l))
     l=ordered_quintet
 
@@ -161,7 +161,7 @@ def basic_score_quintet(S,l,treelist):
     else:
         print 'error: quintet topology ' + T.as_newick_string() + '  not in list'
         score = 0
-    return score
+    return score,U[0][1] 
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 # the only difference between basic_score_quintet_kajori and basic_score_quintet is the last return sentence. I have added it to associated the
@@ -233,12 +233,12 @@ def total_quintet_score(S,i,treelist):
     print 'calculating score for ' + str(i+1) + 'th edge'
     #for j in range(len(Qtreeslist)):
     for j in range(len(Q)):
-        H = basic_score_quintet(T, Q[j],treelist)
+        H,U = basic_score_quintet(T, Q[j],treelist)
         #print H
         scorelist.append(basic_score_quintet(T, Q[j],treelist))
     totalscore = sum(scorelist)
     print scorelist
-    return totalscore
+    return totalscore,U
 
     
 ############### KAJORI BEGIN   ###############   
@@ -488,14 +488,14 @@ def edge_score_on_quintet(S,quintet,treelist):
         if (index in edge_list):
             #print 'index=',index, type(ES[index])
             T_copy.reroot_at_edge(ES[index])
-            H= basic_score_quintet(T_copy,quintet,treelist)
+            H,U= basic_score_quintet(T_copy,quintet,treelist)
             
             score.append(H)
         else:
             score.append(-99)
             #assert sum(U)==1000
      
-    return score#,U
+    return score,U
 
 #it takes as input a tree and prints the tree with the edge scores 
 #if score=True, output= edge_index_in_post_order_iteration/score_of _that_edge
@@ -522,6 +522,36 @@ def my_print_tree(S_original,score,file_name):
             node_list[pos].label=str(pos)+'/'+str(score[pos])
     S.print_plot(show_internal_node_labels=True)
     S.write_to_path(file_name,'newick')
+    return S
+
+#it takes as input a tree, the quintet, 
+#the scores associated with those edges
+# Output : it removes those edges wich are not part of the induced edge subset.
+def format_tree(S,quintet,score):
+    print 'inside format trees'
+    T= dendropy.Tree(my_print_tree(S,score,'dump.trees'))
+    T.encode_splits()
+    T.update_splits()
+    DS = T.split_edges
+    ES = [e for e in T.postorder_edge_iter()]
+    INVDS = {v: k for k, v in DS.items()}
+    
+    ESBITS = [INVDS[ES[i]] for i in range(len(ES))] #dict that gives bitmasks in same order as edge list should be
+    for split_hash_bitmask in ESBITS:
+        taxon=taxon_with_split_edge(T,split_hash_bitmask)
+        if ( len(set(taxon) & set(quintet))==0):
+            #Returns the shallowest node in the tree (the node furthest from the root, 
+            #or start_node, in the direction toward the tips of the tree) that has all of the taxa that:
+            #are specified by the split bitmask given by the keyword argument split_bitmask
+            node=T.mcra(split_bitmask=split_hash_bitmask)
+            # Removes subtree starting at node from tree.
+            #If the old root of the tree had an outdegree of 2, 
+            #then after this operation, it will have an outdegree of one. 
+            #In this case, unless delete_outdegree_one is False, then it will be removed from the tree.
+            T.prune_subtree(node, update_splits=False, delete_outdegree_one=False)
+    print 'after pruning'
+    T.print_plot(show_internal_node_labels=True)
+    #T.write_to_path(file_name,'newick')
     
 
 ############### KAJORI END ###############   

@@ -3,15 +3,14 @@ import InvariantScores
 import time
 import copy 
 
-#model_coditions=['model.10.5400000.0.000000037','model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
-model_coditions=['model.10.5400000.0.000000037']
+model_coditions=['model.10.5400000.0.000000037' ]#,'model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
 # the model_coditions are arranged from lowest to highest ILS
 
-'''
+
 #It runs tests on the Avian dataset 
 #select a quintet on the basis of the topological distance from the root
 #and score all the edges on that quintet
-
+'''
 
 #PART 1
 S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/Avian_0.5X/avian_species_tree.trees','newick') #kajori
@@ -47,35 +46,37 @@ for replicate in range(4,5): #replicate
     
 '''
 
+
 #PART 3
 #It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
 #it selects a quintet and scores the edges on the quintet and checks if the method rules out leaf edges
-f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/U_distribution_10.txt','a')
+#f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/U_distribution_10.txt','a')
 for mc in model_coditions:
-    for replicate in range(1,2):
+    for replicate in range(1,1):
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
         S.deroot()
         treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
         
         print '\n ********** '+mc+'/0'+str(replicate)+ '/ ********** '
         #print(S.as_ascii_plot())
-        #quintet=['1','3','5','7','8']
-        quintet=['0','3','5','7','8']
+        quintet=['1','3','5','7','8']
+        #quintet=['0','3','5','7','8']
         print 'quintet',quintet
     
-        score=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist)
+        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist)
         print 'score = ',score
-        #print 'U=',U
+        print 'U=',U
         
-        '''
-        output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_10_taxon_tree_wih_score_outgroup_in_quintet.trees'
-        InvariantScores.my_print_tree(copy.deepcopy(S),score,output_filename)
+        format_tree(S,quintet,score)
+        
+        #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_10_taxon_tree_with_score.trees'
+        #InvariantScores.my_print_tree(copy.deepcopy(S),score,output_filename)
         
        
-        f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
-        f_write.write(str(U))
-        print 'writted to file'
-        '''
+        #f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
+        #f_write.write(str(U))
+        #print 'writted to file'
+        
 #f_write.close()
    
   
