@@ -166,6 +166,7 @@ def basic_score_quintet(S,l,treelist):
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 # the only difference between basic_score_quintet_kajori and basic_score_quintet is the last return sentence. I have added it to associated the
 #invariant scores with the edges
+'''
 def basic_score_quintet_kajori(S,l, treelist):
     T = dendropy.Tree(S)
     T.retain_taxa_with_labels(l)
@@ -178,6 +179,7 @@ def basic_score_quintet_kajori(S,l, treelist):
             rooted_shape = rooted_shape + rooted_shape_str[i]
     shapes = ['(((,),),(,))', '((((,),),),)', '(((,),(,)),)']
     U = get_dist(l,treelist)
+'''
 
 #basic_score...kajori was for asserting freqs always added to 1000
 #uncommented to get tests to pass 4/24/15
@@ -291,7 +293,7 @@ def total_quintet_score_kajori(S,i,treelist):
     T.reroot_at_edge(e)
    
    
-    H,U = basic_score_quintet_kajori(T,quintet,treelist)
+    H,U = basic_score_quintet(T,quintet,treelist)
     #print ' score = ',H, 'quintet = ',quintet, ' U =',U
     assert sum(U)==1000
     return (H,U,quintet)
@@ -390,7 +392,7 @@ def total_quintet_score_distance_kajori(S,i,treelist):
     
     T= dendropy.Tree(S)
     T.reroot_at_edge(edgelist_postorder[i])
-    H,U = basic_score_quintet_kajori(T,quintet,treelist)
+    H,U = basic_score_quintet(T,quintet,treelist)
     #assert sum(U)==1000
     return (H,U,quintet)            
     
@@ -538,8 +540,15 @@ def format_tree(S,quintet,score,filename):
         else:node_list[pos].label=str(score[pos])
     S.print_plot(show_internal_node_labels=True)
     S.write_to_path(filename,'newick')
-    
 
+#takes a tree as input and prints the newick string formatting the branch lengths
+def print_newick_string(S):
+    T_temp=copy.deepcopy(S.as_newick_string())
+    #re.sub(':[^,]+,', '', T_temp)
+    #print '\n re.sub =',re.sub(':[^,]+,', ',', T_temp)
+    
+    temp=re.sub(':[^\)^,]+', '', T_temp)
+    print temp
 ############### KAJORI END ###############   
     
 

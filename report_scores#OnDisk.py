@@ -3,7 +3,7 @@ import InvariantScores
 import time
 import copy 
 
-model_coditions=['model.10.5400000.0.000000037'  ,'model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
+model_coditions=['model.10.5400000.0.000000037' ]#,'model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
 # the model_coditions are arranged from lowest to highest ILS
 
 
@@ -52,43 +52,22 @@ for replicate in range(4,5): #replicate
 #it selects a quintet and scores the edges on the quintet and checks if the method rules out leaf edges
 #f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/U_distribution_10.txt','a')
 for mc in model_coditions:
-    for replicate in range(1,4):
+    for replicate in range(1,1):
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
         S.deroot()
         treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
         
-        print '\n\n\n ********** Model Condition -'+mc+'/ Replicate '+str(replicate)+ '/ ********** '
-        print ' original tree (for debugging) '
-        InvariantScores.print_newick_string(S)
-        print '\n '
+        print '\n ********** '+mc+'/0'+str(replicate)+ '/ ********** '
         #print(S.as_ascii_plot())
         quintet=['1','3','5','7','8']
         #quintet=['0','3','5','7','8']
         print 'quintet',quintet
     
-        
         score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist)
-        '''
-        print 'original tree for debugging purpose'
-        InvariantScores.my_print_tree(S,score,'dump.trees')
-        print ' Corresponding 5-taxon tree'
-        '''
-        S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
-        S.deroot()
-        print 'U = ',U
+        print 'score = ',score
+        print 'U=',U
         
-        print ' 5 - taxon tree'
-        InvariantScores.format_tree(S,quintet,score,'dump.trees')
-        
-        print ' Newick of the above 5 - taxon tree \n '
-        InvariantScores.print_newick_string(S)
-        
-        print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
-        #S_new=dendropy.Tree.clone_from(S)
-    
-
-        #Clones the structure and properties of Tree object other
-        #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_five_taxon_tree_10_taxon_dataset.trees'
+        format_tree(S,quintet,score)
         
         #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_10_taxon_tree_with_score.trees'
         #InvariantScores.my_print_tree(copy.deepcopy(S),score,output_filename)
