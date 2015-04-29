@@ -3,7 +3,7 @@ import InvariantScores
 import time
 import copy 
 
-model_coditions=['model.10.5400000.0.000000037' ]# ,'model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
+model_coditions=['model.10.5400000.0.000000037','model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
 # the model_coditions are arranged from lowest to highest ILS
 
 
@@ -51,8 +51,9 @@ for replicate in range(4,5): #replicate
 #It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
 #it selects a quintet and scores the edges on the quintet and checks if the method rules out leaf edges
 #f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/U_distribution_10.txt','a')
+my_dict_penalty_1={}
 for mc in model_coditions:
-    for replicate in range(1,2):
+    for replicate in range(1,4):
         print '\n\n\n ********** Model Condition -'+mc+'/ Replicate '+str(replicate)+ '/ ********** '
         
         
@@ -68,7 +69,7 @@ for mc in model_coditions:
         InvariantScores.my_print_tree(S,[-99] * 100,'dump.txt') #[-99] * 100 since we donot want the edges to be scoes. We just want the post-order index
         
         
-       
+        
         #PENALTY 'diff'
         print '\n  Corresponding 5-taxon tree  '
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
@@ -80,14 +81,16 @@ for mc in model_coditions:
         print ' Newick of the above 5 - taxon tree '
         InvariantScores.print_newick_string(S)
         print ' scores',score
-        InvariantScores.scores_edges_root(T_5,score)
+        out=InvariantScores.scores_edges_root(T_5,score)
+       
+        
         #print 'violations ',violations
        
         
         print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
-        
-        
-        '''
+        my_dict_penalty_1[out].append( mc +'/'+ replicate )
+print 'Discussion \n',my_dict_penalty_1 
+'''
         
         print '\n  Corresponding 5-taxon tree - PENALTY FUNCTION 2 '
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori

@@ -1,0 +1,112 @@
+
+
+ 10-taxon datatset/ model condition - model.10.1800000.0.000000111/R2/ 
+ U = [534, 80, 71, 115, 16, 32, 0, 1, 20, 2, 0, 25, 104, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.1800000.0.000000111/R2/ 
+ U = [534, 80, 71, 115, 16, 32, 0, 1, 20, 2, 0, 25, 104, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R2/ 
+ U = [149, 98, 127, 96, 63, 80, 22, 33, 93, 20, 22, 61, 95, 26, 15]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R3/ 
+ U = [799, 83, 92, 14, 0, 2, 0, 0, 2, 0, 0, 2, 6, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.1800000.0.000000111/R1/ 
+ U = [399, 301, 295, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.1800000.0.000000111/R2/ 
+ U = [534, 80, 71, 115, 16, 32, 0, 1, 20, 2, 0, 25, 104, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.1800000.0.000000111/R3/ 
+ U = [592, 161, 172, 17, 6, 8, 2, 0, 14, 1, 0, 13, 13, 0, 1]
+
+ 10-taxon datatset/ model condition - model.10.600000.0.000000333/R1/ 
+ U = [285, 244, 281, 19, 12, 30, 11, 11, 34, 10, 12, 15, 13, 10, 13]
+
+ 10-taxon datatset/ model condition - model.10.600000.0.000000333/R2/ 
+ U = [410, 107, 109, 99, 44, 44, 3, 3, 32, 7, 3, 36, 99, 2, 2]
+
+ 10-taxon datatset/ model condition - model.10.600000.0.000000333/R3/ 
+ U = [112, 93, 117, 82, 71, 108, 32, 28, 106, 19, 32, 69, 62, 37, 32]
+
+ 10-taxon datatset/ model condition - model.10.200000.0.000001000/R1/ 
+ U = [170, 179, 194, 29, 38, 53, 25, 35, 69, 38, 32, 35, 37, 32, 34]
+
+ 10-taxon datatset/ model condition - model.10.200000.0.000001000/R2/ 
+ U = [123, 89, 132, 57, 57, 101, 40, 38, 76, 37, 32, 76, 64, 43, 35]
+
+ 10-taxon datatset/ model condition - model.10.200000.0.000001000/R3/ 
+ U = [80, 88, 123, 64, 61, 96, 51, 36, 111, 55, 38, 48, 71, 33, 45]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+ 10-taxon datatset/ model condition - model.10.5400000.0.000000037/R1/ 
+ U = [499, 249, 252, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
