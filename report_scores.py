@@ -3,7 +3,7 @@ import InvariantScores
 import time
 import copy 
 
-model_coditions=['model.10.5400000.0.000000037'  ,'model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
+model_coditions=['model.10.5400000.0.000000037' ]# ,'model.10.1800000.0.000000111','model.10.600000.0.000000333','model.10.200000.0.000001000']
 # the model_coditions are arranged from lowest to highest ILS
 
 
@@ -50,69 +50,64 @@ for replicate in range(4,5): #replicate
 #PART 3
 #It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
 #it selects a quintet and scores the edges on the quintet and checks if the method rules out leaf edges
-f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/U_distribution_10.txt','a')
+#f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/U_distribution_10.txt','a')
 for mc in model_coditions:
-    for replicate in range(1,4):
+    for replicate in range(1,2):
         print '\n\n\n ********** Model Condition -'+mc+'/ Replicate '+str(replicate)+ '/ ********** '
+        
         
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
         print 'before derooting '
         InvariantScores.print_newick_string(S)
-        node_list=[n for n in S.postorder_node_iter()]
-        print len(node_list)
-        print(S.as_ascii_plot())
-        print '\n\n Now  the tree is derooted'
-        S.deroot()
-        treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
         
-        print ' Derooted tree '
-        InvariantScores.print_newick_string(S)
-        node_list=[n for n in S.postorder_node_iter()]
-        print len(node_list)
-       
-        print '\n '
-        print(S.as_ascii_plot())
-        #quintet=['1','3','5','7','8']
         quintet=['0','3','5','7','8']
         print 'quintet',quintet
-    
-         
-        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist)
-       
-        print 'original tree for debugging purpose'
+        
+        print ' Original tree with index of edges in post-order iteration'
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
-        S.deroot()
-        output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_10_taxon_tree_with_score.trees'
-        InvariantScores.my_print_tree(S,score,output_filename)
-        print ' Corresponding 5-taxon tree'
+        InvariantScores.my_print_tree(S,[-99] * 100,'dump.txt') #[-99] * 100 since we donot want the edges to be scoes. We just want the post-order index
         
+        
+        '''
+        #PENALTY 'diff'
+        print '\n  Corresponding 5-taxon tree  '
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
-        S.deroot()
-        print 'U = ',U
+        treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
+        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist,'diff')
+        #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_5_taxon_tree_with_score.trees'
+        InvariantScores.format_tree(S,quintet,score,'dump.trees')
         
-        print ' 5 - taxon tree'
-        output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_5_taxon_tree_with_score.trees'
-        InvariantScores.format_tree(S,quintet,score,output_filename)
-        
-        print ' Newick of the above 5 - taxon tree \n '
+        print ' Newick of the above 5 - taxon tree '
         InvariantScores.print_newick_string(S)
         
-        print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
-        #S_new=dendropy.Tree.clone_from(S)
-    
-
-        #Clones the structure and properties of Tree object other
-        #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_five_taxon_tree_10_taxon_dataset.trees'
         
-        #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_trees/'+str(mc)+'_'+str(replicate)+'_10_taxon_tree_with_score.trees'
-        #InvariantScores.my_print_tree(copy.deepcopy(S),score,output_filename)
+        #print 'violations ',violations
+       
+        
+        print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
+        
+        
+        '''
+        
+        print '\n  Corresponding 5-taxon tree - PENALTY FUNCTION 2 '
+        S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
+        treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
+        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist,'ratio')
+        #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_5_taxon_tree_with_score.trees'
+        InvariantScores.format_tree(S,quintet,score,'dump.trees')
+        
+        print 'score =', score
+        
+        print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
+        
+        
         
        
-        f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
-        f_write.write(str(U))
-        print 'writted to file'
+        #f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
+        #f_write.write(str(U))
+        #print 'writted to file'
         
-f_write.close()
+#f_write.close()
        
   
 

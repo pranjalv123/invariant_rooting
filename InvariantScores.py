@@ -16,6 +16,16 @@ import re  #by kajori
 #pp = pprint.PrettyPrinter(indent=4)
 #inv3 gets the score for 3-taxon trees or 4-taxon trees.  Use for u1 the
 #probability that the gene tree matches the species tree, then u2, u3 those that don't
+
+def penalty(str_x,x,str_y,y,user_function):
+    if (user_function=='diff'): score= (-1)*min(x-y,0)
+    elif (user_function=='ratio'):score=max(float(y+1)/float(x+1),1)
+    if (score>0 and user_function=='diff'): error_str= str_y +' > '+str_x +', '+ str(y) + '>' + str(x)+ ', penalty  = ' + str(score)
+    elif (score>1 and user_function=='ratio'):error_str= str_y +' > '+str_x +', '+ str(y) + '>' + str(x)+ ', penalty  = ' + str(score)
+    else:error_str=''
+    #print user_function, score, x, y, error_str
+    return score,error_str    
+
 def inv3(u1, u2, u3):
     a12 = min(u1-u2,0)
     a13 = min(u1-u3,0)
@@ -39,7 +49,30 @@ def inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     score1 = (-1)*a12 + (-1)*a14 + (-1)*a25 + (-1)*a45 + (-1)*a57
     #score2 = abs(u14 - u15) + abs(u11-u15) + abs(u10-u15) + abs(u9-u12) + abs(u8-u15) + abs(u7-u15) + abs(u6-u12) + abs(u5-u12) + abs(u4-u13) + abs(u2-u3)
     score = score1 #+ score2
-    return score
+   
+    error_str = ''
+    if score> 0:  error_str =  error_str+ 'violation  inv51 - balanced species tree '
+    if (u2>u1):  error_str =  error_str+  '\n  u2 > u1 ,'+ str(u2),'>' + str(u1)+ ', penalty  = ' + str(u2-u1)
+    if (u4>u1):  error_str =  error_str+  '\n  u4 > u1 ,'+ str(u4)+'>'+ str(u1)+ ', penalty  = ' + str(u2-u1)
+    if (u5>u2):  error_str =  error_str+  '\n  u5 > u2 ,'+ str(u5)+'>'+ str(u2)+ ', penalty  = ' + str(u2-u1)
+    if (u5>u4):  error_str =  error_str+  '\n  u5 > u4 ,'+ str(u5)+'>'+ str(u4)+ ', penalty  = ' + str(u2-u1)
+    if (u5>u7):  error_str =  error_str+  '\n  u7 > u5 ,'+ str(u5)+'>'+ str(u7)+ ', penalty  = ' + str(u2-u1)
+    
+    return score,error_str 
+
+
+def inv51_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
+    a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
+    a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
+    a25,error_str_25 = penalty('u2',u2,'u5',u5,user_function)
+    a45,error_str_45 = penalty('u4',u4,'u5',u5,user_function)
+    a57,error_str_57 = penalty('u5',u5,'u7',u7,user_function)
+    score1 = a12 + a14 + a25 + a45 + a57
+    #score2 = abs(u14 - u15) + abs(u11-u15) + abs(u10-u15) + abs(u9-u12) + abs(u8-u15) + abs(u7-u15) + abs(u6-u12) + abs(u5-u12) + abs(u4-u13) + abs(u2-u3)
+    score = score1 #+ score2
+    error_str = error_str_12 +error_str_14+error_str_25+error_str_45+error_str_57
+    if bool(error_str):error_str = 'violation  inv51 - balanced tree \n'+ error_str
+    return score,error_str 
 
 #inv52 is for the caterpillar tree 5 leaves ((((a,b),c),d),e)
 def inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15): 
@@ -54,7 +87,35 @@ def inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     score1 = (-1)*a12 + (-1)*a14 + (-1)*a25 + (-1)*a45 + (-1)*a57 + (-1)*a32 + (-1)*a36 + (-1)*a65
     #score2 = abs(u14-u15) + abs(u11-u15) + abs(u10-u15) + abs(u8-u15) + abs(u7-u15) + abs(u6-u9) + abs(u5-u12) + abs(u4-u13) + abs(u2-u3 + u9-u12)
     score = score1 #+ score2
-    return score
+    
+    error_str = ''
+    if score> 0:  error_str =  error_str+ 'violation  inv52 - caterpillar tree'
+    if (u2>u1):  error_str =  error_str+ '\n  u2 > u1 ,' + str(u2)+'>'+ str(u1) + ', penalty  = ' + str(u2-u1)
+    if (u4>u1):  error_str =  error_str+ '\n  u4 > u1 ,' + str(u4)+'>'+ str(u1)+ ', penalty  = ' + str(u4-u1)
+    if (u5>u2):  error_str =  error_str+ '\n  u5 > u2 ,' + str(u5)+'>'+ str(u2)+ ', penalty  = ' + str(u5-u2)
+    if (u5>u4):  error_str =  error_str+ '\n  u5 > u4 ,' + str(u5)+'>'+ str(u4)+ ', penalty  = ' + str(u5-u4)
+    if (u5>u7):  error_str =  error_str+ '\n  u5 > u7 ,' + str(u5)+'>'+ str(u7)+ ', penalty  = ' + str(u5-u7)
+    if (u2>u3):  error_str =  error_str+ '\n  u2 > u3 ,' + str(u2)+'>'+ str(u3)+ ', penalty  = ' + str(u2-u3)
+    if (u6>u3):  error_str =  error_str+ '\n  u6 > u3 ,' + str(u6)+'>'+ str(u3)+ ', penalty  = ' + str(u6-u3)
+    if (u6>u5):  error_str =  error_str+ '\n  u6 > u5 ,' + str(u6)+'>'+ str(u5)+ ', penalty  = ' + str(u6-u5)
+    
+    return score,error_str 
+
+def inv52_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function): 
+    a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
+    a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
+    a25,error_str_25 = penalty('u2',u2,'u5',u5,user_function)
+    a45,error_str_45 = penalty('u4',u4,'u5',u5,user_function)
+    a57,error_str_57 = penalty('u5',u5,'u7',u7,user_function)
+    a32,error_str_32 = penalty('u3',u3,'u2',u2,user_function)
+    a36,error_str_36 = penalty('u3',u3,'u6',u6,user_function)
+    a65,error_str_65 = penalty('u6',u6,'u5',u5,user_function)
+    score1 = a12 + a14 + a25 + a45 + a57 + a32 + a36 + a65
+    #score2 = abs(u14-u15) + abs(u11-u15) + abs(u10-u15) + abs(u8-u15) + abs(u7-u15) + abs(u6-u9) + abs(u5-u12) + abs(u4-u13) + abs(u2-u3 + u9-u12)
+    score = score1 #+ score2
+    error_str = error_str_12 +error_str_14+error_str_25+error_str_45+error_str_57+ error_str_32 + error_str_36 + error_str_65
+    if bool(error_str):error_str = 'violation  inv52 - caterpillar tree \n'+ error_str
+    return score,error_str 
 
 #inv53 is for the pseudocaterpillar tree (((a,b),(d,e)),c)
 def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
@@ -67,8 +128,32 @@ def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     score1 = (-1)*a12 + (-1)*a14 + (-1)*a18 + (-1)*a25 + (-1)*a45 + (-1)*a85
     #score2 = abs(u14-u15) + abs(u12-u15) + abs(u10-u15) + abs(u9-u15) + abs(u8-u11) + abs(u7-u15) + abs(u6-u15) + abs(u5-u15) + abs(u4-u13) + abs(u2-u3)
     score = score1 #+ score2
-    return score
+    
+    error_str = ''
+    if score> 0: error_str =  error_str+ 'violation  inv53 -  pseudocaterpillar tree'
+    if (u2>u1):  error_str =  error_str+ '  u2 > u1 ,'+ str(u2)+'>'+ str(u1)+ ', penalty  = ' + str(u2-u1)
+    if (u4>u1):error_str =  error_str+ '  u4 > u1 ,'+ str(u4)+'>'+ str(u1)+ ', penalty  = ' + str(u4-u1)
+    if (u8>u1):error_str =  error_str+ '  u8 > u1 ,'+ str(u8)+'>'+ str(u1)+ ', penalty  = ' + str(u8-u1)
+    if (u5>u2):error_str =  error_str+ '  u5 > u2 ,'+ str(u5)+'>'+ str(u2)+ ', penalty  = ' + str(u5-u2)
+    if (u5>u4):error_str =  error_str+ '  u5 > u4 ,'+ str(u5)+'>'+ str(u4)+ ', penalty  = ' + str(u5-u4)
+    if (u5>u8):error_str =  error_str+ '  u5 > u8 ,'+ str(u5)+'>'+ str(u8)+ ', penalty  = ' + str(u5-u8)
+    
+    return score,error_str 
 
+def inv53_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
+    a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
+    a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
+    a18,error_str_18 = penalty('u1',u1,'u8',u8,user_function)
+    a25,error_str_25 = penalty('u2',u2,'u5',u5,user_function)
+    a45,error_str_45 = penalty('u4',u4,'u5',u5,user_function)
+    a85,error_str_85 = penalty('u8',u8,'u5',u5,user_function)
+    score1 = a12 + a14 + a18 + a25 + a45 + a85
+    #score2 = abs(u14-u15) + abs(u12-u15) + abs(u10-u15) + abs(u9-u15) + abs(u8-u11) + abs(u7-u15) + abs(u6-u15) + abs(u5-u15) + abs(u4-u13) + abs(u2-u3)
+    score = score1 #+ score2
+    error_str = error_str_12 + error_str_14 + error_str_18 + error_str_25 + error_str_45 + error_str_85
+    if bool(error_str):error_str = 'violation  inv53 - psedocaterpillar tree \n'+ error_str
+    return score,error_str 
+    
 #re-verified 4/15/15 that t_1 are in the same order as in appendix of allman-rhodes-degnan
 #l=list of taxon labels as strings from listofgenetreeschoices,listofgenetrees=dendropy TreeList
 def dist_counter(l,listofgenetrees):
@@ -120,7 +205,7 @@ def get_dist(l,treelist):
     return [dist, garbage, incompletes]
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
-def basic_score_quintet(S,l,treelist):
+def basic_score_quintet(S,l,treelist,user_function):
     T = dendropy.Tree(S)
     T.retain_taxa_with_labels(l)
     
@@ -146,22 +231,41 @@ def basic_score_quintet(S,l,treelist):
     #print  '\n ordered_quintet    =',ordered_quintet
     assert((set(l) | set(ordered_quintet))==set(l))
     l=ordered_quintet
-
+   
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     scorefuncs= [inv51, inv52, inv53]
-    if rooted_shape == shapes[0]:
-        score = inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
-    elif rooted_shape == shapes[1]:
-        score = inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
-    elif rooted_shape == shapes[2]:
-        score = inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+  
+    if (user_function=='ratio'):
+        if rooted_shape == shapes[0]:
+            score,error_str = inv51_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
+        elif rooted_shape == shapes[1]:
+            score,error_str = inv52_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
+        elif rooted_shape == shapes[2]:
+            score,error_str = inv53_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
         #score_function = scorefuncs[shapes.index(rooted_shape)]
         #score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
-    else:
-        print 'error: quintet topology ' + T.as_newick_string() + '  not in list'
-        score = 0
-    return score,U[0][1] 
+        else:
+            print 'error: quintet topology ' + T.as_newick_string() + '  not in list'
+            score = 0
+            error_str=''
+    
+    elif(user_function=='diff'):
+        if rooted_shape == shapes[0]:
+            score,error_str = inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        elif rooted_shape == shapes[1]:
+            #print 'u2 =',u2,'u3=',u3
+            score,error_str = inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        elif rooted_shape == shapes[2]:
+            score,error_str= inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        #score_function = scorefuncs[shapes.index(rooted_shape)]
+        #score = score_function(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15)
+        else:
+            print 'error: quintet topology ' + T.as_newick_string() + '  not in list'
+            score = 0
+            error_str=''
+    #print ' 1. l= ',l,' U=',U[0][1] #RUTH - U changes with l
+    return score,U[0][1],error_str 
 
 #S is a rooted species tree, l is a list of five taxa labels like in get_dist, etc.Picking the edge and the quintet are unresolved
 # the only difference between basic_score_quintet_kajori and basic_score_quintet is the last return sentence. I have added it to associated the
@@ -234,13 +338,13 @@ def total_quintet_score(S,i,treelist):
     scorelist = []
     print 'calculating score for ' + str(i+1) + 'th edge'
     #for j in range(len(Qtreeslist)):
+
     for j in range(len(Q)):
-        H,U = basic_score_quintet(T, Q[j],treelist)
-        #print H
+        H,U,str = basic_score_quintet(T, Q[j],treelist)
         scorelist.append(basic_score_quintet(T, Q[j],treelist))
     totalscore = sum(scorelist)
-    print scorelist
-    return totalscore,U
+    #print scorelist
+    return totalscore,U,str
 
     
 ############### KAJORI BEGIN   ###############   
@@ -467,36 +571,50 @@ def find_induced_edge_indexes(S,quintet):
     pos=0
     for split_hash_bitmask in ESBITS:
         taxon_1=taxon_with_split_edge(T,split_hash_bitmask)
+        #print 'taxon_1 ',taxon_1, ' pos ',pos
         #ensures that the elements from the quintet are on both sides on the edge
+        #print 'taxon_1 =',taxon_1,' pos ',pos
         if ((len(set(taxon_1) & set(quintet))>0) and ( len((set(taxon_set)-set(taxon_1)) & set(quintet))>0)):
             edges_included.append(pos)
-            #print 'taxon_1 =',taxon_1,' pos ',pos
+            #print 'included '
         #else:
             #print 'taxon_1 =',taxon_1
+        #corner cases
+        #THIS HACK WORKS ONLY FOR THE 10-taXON DATASET. DISCUSS WITH RUTH ABOUT THIS
+        elif (len(set(taxon_set)-set(taxon_1)) ==0) and ( '0' in quintet) :
+            edges_included.append(pos)
+            #print 'included '
         pos=pos+1
     #print 'edges_included =',edges_included
     return edges_included
             
 #given a quintet returns the scores of the induced edges in the postorder_edge_iter
 #if the edge index in the postorder_edge_iter is not induced the score is reported as -99
-def edge_score_on_quintet(S,quintet,treelist):
+def edge_score_on_quintet(S,quintet,treelist,user_function):
     T= dendropy.Tree(S)
-    T.deroot()
     ES = [e for e in T.postorder_edge_iter()]
     edge_list=find_induced_edge_indexes(copy.deepcopy(S),quintet)
+    #print 'len induced_edge ', len(edge_list), ' list ', edge_list
+    #print 'before scoring'
+    #print(S.as_ascii_plot())
     score=[]
-    for index in range(len(ES)-1):
+    violations=''
+   
+    for index in range(0,len(ES)):
         T_copy=copy.deepcopy(T)
         if (index in edge_list):
             #print 'index=',index, type(ES[index])
             T_copy.reroot_at_edge(ES[index])
-            H,U= basic_score_quintet(T_copy,quintet,treelist)
-            
+            H,U,error_str= basic_score_quintet(T_copy,quintet,treelist,user_function)
             score.append(H)
+           
+            
+            if bool(error_str): print '\n For edge index '+ str(index)+ ' \n  '+error_str +' \n U= ',U
         else:
             score.append(-99)
             #assert sum(U)==1000
      
+    #print violations
     return score,U
 
 #it takes as input a tree and prints the tree with the edge scores 
@@ -508,10 +626,9 @@ def edge_score_on_quintet(S,quintet,treelist):
 def my_print_tree(S_original,score,file_name):
     
     S=copy.deepcopy(S_original) #so that we do not change the labels of the original tree
-    S.deroot()
     node_list=[n for n in S.postorder_node_iter()]
     #print 'len', len(score), len(node_list)
-    for pos in range(0,len(node_list)-1): #I'm stopping at the second to last edge because I think in the postorder traversal the final node is redundant due to Dendropy's "seed node" structure
+    for pos in range(0,len(node_list)-1): #I'm stopping at the second to last edge because I think in the postorder traversal the final node is redundant due to Dendropy's 'seed node' structure
         #print pos,score[pos],type(node_list[pos])
        
         if( score[pos]==-99 and node_list[pos].is_leaf()): 
@@ -535,7 +652,11 @@ def format_tree(S,quintet,score,filename):
     while -99 in score: score.remove(-99)
     #print score
     node_list=[n for n in S.postorder_node_iter()]
-    for pos in range(len(node_list)-1):
+    e=[e for e in S.postorder_edge_iter()]
+    #print ' len = ',len(node_list),len(e),len(score)
+    
+    
+    for pos in range(len(node_list)-1): # the last edge is the edge added by dendropy. So I am not using it
         if (node_list[pos].is_leaf()):node_list[pos].taxon.label=node_list[pos].taxon.label+'/'+str(score[pos])
         else:node_list[pos].label=str(score[pos])
     S.print_plot(show_internal_node_labels=True)
@@ -544,11 +665,9 @@ def format_tree(S,quintet,score,filename):
 #takes a tree as input and prints the newick string formatting the branch lengths
 def print_newick_string(S):
     T_temp=copy.deepcopy(S.as_newick_string())
-    #re.sub(':[^,]+,', '', T_temp)
-    #print '\n re.sub =',re.sub(':[^,]+,', ',', T_temp)
-    
     temp=re.sub(':[^\)^,]+', '', T_temp)
-    print temp
+    print temp 
+
 ############### KAJORI END ###############   
     
 
@@ -614,7 +733,7 @@ class QuartetsInfo:
         elif a in [[0,3], [1,2]]:
             u1, u2, u3 = f3, f1, f2
         else:
-            print "problem with quartet score input indices"
+            print 'problem with quartet score input indices'
             print L, i, j
         a12 = min(u1-u2,0)
         a13 = min(u1-u3,0)
@@ -724,7 +843,7 @@ class QuartetsInfoInequalitiesOnly:
         elif a in [[0,3], [1,2]]:
             u1, u2, u3 = f3, f1, f2
         else:
-            print "problem with quartet score input indices"
+            print 'problem with quartet score input indices'
             print L, i, j
         a12 = min(u1-u2,0)
         a13 = min(u1-u3,0)
