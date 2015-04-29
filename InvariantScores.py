@@ -17,6 +17,8 @@ import re  #by kajori
 #inv3 gets the score for 3-taxon trees or 4-taxon trees.  Use for u1 the
 #probability that the gene tree matches the species tree, then u2, u3 those that don't
 
+#this function penalty takes the values u_i and u_j and calculates the penalty score depending on the user_function
+# The error str is printed which shows the invariants that are violated
 def penalty(str_x,x,str_y,y,user_function):
     if (user_function=='diff'): score= (-1)*min(x-y,0)
     elif (user_function=='ratio'):score=max(float(y+1)/float(x+1),1)
@@ -101,6 +103,7 @@ def inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     
     return score,error_str 
 
+#inv52_func is for the caterpillar tree 5 leaves ((((a,b),c),d),e)
 def inv52_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function): 
     a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
     a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
@@ -140,6 +143,7 @@ def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     
     return score,error_str 
 
+#inv53_func is for the pseudocaterpillar tree (((a,b),(d,e)),c)
 def inv53_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
     a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
     a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
@@ -151,7 +155,7 @@ def inv53_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,
     #score2 = abs(u14-u15) + abs(u12-u15) + abs(u10-u15) + abs(u9-u15) + abs(u8-u11) + abs(u7-u15) + abs(u6-u15) + abs(u5-u15) + abs(u4-u13) + abs(u2-u3)
     score = score1 #+ score2
     error_str = error_str_12 + error_str_14 + error_str_18 + error_str_25 + error_str_45 + error_str_85
-    if bool(error_str):error_str = 'violation  inv53 - psedocaterpillar tree \n'+ error_str
+    if bool(error_str):error_str = 'violation  inv53 - pseudocaterpillar tree \n'+ error_str
     return score,error_str 
     
 #re-verified 4/15/15 that t_1 are in the same order as in appendix of allman-rhodes-degnan
@@ -661,13 +665,60 @@ def format_tree(S,quintet,score,filename):
         else:node_list[pos].label=str(score[pos])
     S.print_plot(show_internal_node_labels=True)
     S.write_to_path(filename,'newick')
-
+    return S
+    
 #takes a tree as input and prints the newick string formatting the branch lengths
 def print_newick_string(S):
     T_temp=copy.deepcopy(S.as_newick_string())
     temp=re.sub(':[^\)^,]+', '', T_temp)
     print temp 
 
+#takes a 5-taxon tree (T_5) as input and finds whether the edges beside the root are getting the best edge 
+#if yes return 1 if no other edge other than the root edges get the min score
+#if yes return 2 if no other edge other than the root edges get the min score
+#return 0 if both the root edges > min score
+#return 1 both root edges have same score and only the root edge gets the min score
+#return 2 both root edges have same score but there is some other node with the min score
+#return 3 both root edges do not have same score but only the root edge gets the min score
+#return 4 both root edges do not  have same score and there is some other node with the min score
+#this function will be helpful for the discussion section
+def scores_edges_root(T_5,score):
+    node_list=[ n for n in T_5.level_order_node_iter()]
+    #check if the root is the node_list[0] - check passed because node_list[0] has bel None
+    #for n in  node_list:
+    #    if (n.is_leaf()): print n.taxon.label
+    #    else:print n.label
+    root=node_list[0]
+    root_edges=[ e for e in root.get_incident_edges()]
+    edge_list=[e for e in T_5.postorder_edge_iter()]
+    #print ' scores_edges_root len(score) = ',len(score),' len(edge_list) ',len(edge_list)
+    my_dict={}
+    for index in range(len(score)):
+        my_dict[edge_list[index]]=score[index]
+    #print ' dictionary ',  my_dict.keys() , '\n  ***' ,root_edges
+    print 'scores of root edges'
+    root_score=[]
+    for e in set(root_edges) & set(my_dict.keys()):
+        root_score.append(my_dict[e])
+    if ( min(root_score) > min(score)):
+        print 'root is not properly scored'
+        return 0
+    if (root_score[0]==root_score[1]):
+        print ' root gets min score and both root edges get same score'
+        if (score.count(min(score))==2): 
+            print ' No edge other than root gets the best score '
+            return 1
+        else:  return 2
+    else:
+        print ' root gets min score'
+        if (score.count(min(score))==1): 
+            print ' No edge other than root gets the best score '
+            return 3
+        else:  return 4
+        
+        
+        
+    
 ############### KAJORI END ###############   
     
 

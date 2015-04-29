@@ -68,19 +68,19 @@ for mc in model_coditions:
         InvariantScores.my_print_tree(S,[-99] * 100,'dump.txt') #[-99] * 100 since we donot want the edges to be scoes. We just want the post-order index
         
         
-        '''
+       
         #PENALTY 'diff'
         print '\n  Corresponding 5-taxon tree  '
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
         treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
         score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist,'diff')
         #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_5_taxon_tree_with_score.trees'
-        InvariantScores.format_tree(S,quintet,score,'dump.trees')
+        T_5=InvariantScores.format_tree(S,quintet,score,'dump.trees')
         
         print ' Newick of the above 5 - taxon tree '
         InvariantScores.print_newick_string(S)
-        
-        
+        print ' scores',score
+        InvariantScores.scores_edges_root(T_5,score)
         #print 'violations ',violations
        
         
@@ -94,13 +94,13 @@ for mc in model_coditions:
         treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
         score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist,'ratio')
         #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_5_taxon_tree_with_score.trees'
-        InvariantScores.format_tree(S,quintet,score,'dump.trees')
+        T_5=InvariantScores.format_tree(S,quintet,score,'dump.trees')
         
-        print 'score =', score
+        #print 'score =', score
         
         print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
         
-        
+        '''
         
        
         #f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
