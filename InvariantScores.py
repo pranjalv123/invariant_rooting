@@ -9,7 +9,7 @@ import numpy as np
 import copy #by kajori
 import Queue #by kajori
 import re  #by kajori
-
+import math  #by kajori
 
 #from dendropy import *
 #nuclear option to not type dendropy. I think this is frowned upon
@@ -22,8 +22,15 @@ import re  #by kajori
 def penalty(str_x,x,str_y,y,user_function):
     if (user_function=='diff'): score= (-1)*min(x-y,0)
     elif (user_function=='ratio'):score=max(float(y+1)/float(x+1),1)
+    elif (user_function=='stat' and x>=y): score=0
+    elif  (user_function=='stat' and x<y): 
+        temp=(float(x+1)/float(y+1+x+1))
+        #print 'temp ', temp, ' x =',x,'y =',y
+        #temp_1=(float(y+1)/float(y+1+x+1))
+        score = (float(-1*(x+1))* math.log(temp))# + (float(-1*(y+1))* math.log(temp_1)) #+(float(y)* math.log(float(y)/float(y+x)))+ 
     if (score>0 and user_function=='diff'): error_str= str_y +' > '+str_x +', '+ str(y) + '>' + str(x)+ ', penalty  = ' + str(score)
     elif (score>1 and user_function=='ratio'):error_str= str_y +' > '+str_x +', '+ str(y) + '>' + str(x)+ ', penalty  = ' + str(score)
+    elif (score>0 and user_function=='stat'):error_str= str_y +' > '+str_x +', '+ str(y) + '>' + str(x)+ ', penalty  = ' + str(score)
     else:error_str=''
     #print user_function, score, x, y, error_str
     return score,error_str    
@@ -54,11 +61,11 @@ def inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
    
     error_str = ''
     if score> 0:  error_str =  error_str+ 'violation  inv51 - balanced species tree '
-    if (u2>u1):  error_str =  error_str+  '\n  u2 > u1 ,'+ str(u2),'>' + str(u1)+ ', penalty  = ' + str(u2-u1)
-    if (u4>u1):  error_str =  error_str+  '\n  u4 > u1 ,'+ str(u4)+'>'+ str(u1)+ ', penalty  = ' + str(u2-u1)
-    if (u5>u2):  error_str =  error_str+  '\n  u5 > u2 ,'+ str(u5)+'>'+ str(u2)+ ', penalty  = ' + str(u2-u1)
-    if (u5>u4):  error_str =  error_str+  '\n  u5 > u4 ,'+ str(u5)+'>'+ str(u4)+ ', penalty  = ' + str(u2-u1)
-    if (u5>u7):  error_str =  error_str+  '\n  u7 > u5 ,'+ str(u5)+'>'+ str(u7)+ ', penalty  = ' + str(u2-u1)
+    if (u2>u1):  error_str =  error_str+  '\n  u2 > u1 ,'+ str(u2)+'>' + str(u1)+ ', penalty  = ' + str(u2-u1)
+    if (u4>u1):  error_str =  error_str+  '\n  u4 > u1 ,'+ str(u4)+'>'+ str(u1)+ ', penalty  = ' + str(u4-u1)
+    if (u5>u2):  error_str =  error_str+  '\n  u5 > u2 ,'+ str(u5)+'>'+ str(u2)+ ', penalty  = ' + str(u5-u2)
+    if (u5>u4):  error_str =  error_str+  '\n  u5 > u4 ,'+ str(u5)+'>'+ str(u4)+ ', penalty  = ' + str(u5-u4)
+    if (u5>u7):  error_str =  error_str+  '\n  u7 > u5 ,'+ str(u5)+'>'+ str(u7)+ ', penalty  = ' + str(u5-u7)
     
     return score,error_str 
 
@@ -240,7 +247,7 @@ def basic_score_quintet(S,l,treelist,user_function):
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
     scorefuncs= [inv51, inv52, inv53]
   
-    if (user_function=='ratio'):
+    if (user_function!='diff'):
         if rooted_shape == shapes[0]:
             score,error_str = inv51_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
         elif rooted_shape == shapes[1]:
@@ -452,7 +459,7 @@ def sort_list_distance_kajori(T,taxon):
 # this function finds the quinters closest to the root
 # S = TreeList ,i = index of edge under investigation  dir= tail/head
 #total_quintet_score_distance_kajori along with nearest_quintet_kajori endsures that the edge is there in the induced subgraph 
-def total_quintet_score_distance_kajori(S,i,treelist):
+def total_quintet_score_distance_kajori(S,i,treelist,user_function):
     T= dendropy.Tree(S)
     T.deroot()
     taxon_1,taxon_2=nearest_quintet_kajori(copy.deepcopy(S),i)
@@ -500,7 +507,7 @@ def total_quintet_score_distance_kajori(S,i,treelist):
     
     T= dendropy.Tree(S)
     T.reroot_at_edge(edgelist_postorder[i])
-    H,U = basic_score_quintet(T,quintet,treelist)
+    H,U,error_str = basic_score_quintet(T,quintet,treelist,user_function)
     #assert sum(U)==1000
     return (H,U,quintet)            
     
@@ -682,6 +689,9 @@ def print_newick_string(S):
 #return 3 both root edges do not have same score but only the root edge gets the min score
 #return 4 both root edges do not  have same score and there is some other node with the min score
 #this function will be helpful for the discussion section
+#Pay attention to the returned values
+#for 0 - return root score+ min score
+#rest root score+ number of edges other than root edges with  in score
 def scores_edges_root(T_5,score):
     node_list=[ n for n in T_5.level_order_node_iter()]
     #check if the root is the node_list[0] - check passed because node_list[0] has bel None
@@ -702,19 +712,19 @@ def scores_edges_root(T_5,score):
         root_score.append(my_dict[e])
     if ( min(root_score) > min(score)):
         print 'root is not properly scored'
-        return 0
+        return 0,'root score = '+ str(root_score[0]), min(score)
     if (root_score[0]==root_score[1]):
         print ' root gets min score and both root edges get same score'
         if (score.count(min(score))==2): 
             print ' No edge other than root gets the best score '
-            return 1
-        else:  return 2
+            return 1,'root score = '+ str(root_score[0]),0
+        else:  return 2,'root score = '+ str(root_score[0]), score.count(min(score)) - 2
     else:
         print ' root gets min score'
         if (score.count(min(score))==1): 
             print ' No edge other than root gets the best score '
-            return 3
-        else:  return 4
+            return 3, 'root score = '+ str(root_score[0]),0
+        else:  return 4, 'root score = '+ str(root_score[0]),score.count(min(score))-1
         
         
         

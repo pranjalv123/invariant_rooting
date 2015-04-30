@@ -45,19 +45,27 @@ for replicate in range(4,5): #replicate
     print 'quintet',quintet
     
 '''
-
+'''
 
 #PART 3
 #It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
 #it selects a quintet and scores the edges on the quintet and checks if the method rules out leaf edges
 #f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/U_distribution_10.txt','a')
 my_dict_penalty_1={}
+my_dict_penalty_1[0]=[]
+my_dict_penalty_1[1]=[]
+my_dict_penalty_1[2]=[]
+my_dict_penalty_1[3]=[]
+my_dict_penalty_1[4]=[]
+print ' Function = stat'
 for mc in model_coditions:
-    for replicate in range(1,4):
+    for replicate in range(1,11):
+        if (replicate>=10): in_path='/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/'+str(replicate)
+        else: in_path='/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)
         print '\n\n\n ********** Model Condition -'+mc+'/ Replicate '+str(replicate)+ '/ ********** '
         
         
-        S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
         print 'before derooting '
         InvariantScores.print_newick_string(S)
         
@@ -65,33 +73,63 @@ for mc in model_coditions:
         print 'quintet',quintet
         
         print ' Original tree with index of edges in post-order iteration'
-        S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
         InvariantScores.my_print_tree(S,[-99] * 100,'dump.txt') #[-99] * 100 since we donot want the edges to be scoes. We just want the post-order index
         
         
         
         #PENALTY 'diff'
         print '\n  Corresponding 5-taxon tree  '
-        S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
-        treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
-        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist,'diff')
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
+        treelist =  dendropy.TreeList.get_from_path(in_path+'/truegenetrees','newick', taxon_set = S.taxon_set) 
+        score,U=InvariantScores.edge_score_on_quintet(copy.deepcopy(S),quintet,treelist,'stat')
         #output_filename='/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/'+str(mc)+'_'+str(replicate)+'_5_taxon_tree_with_score.trees'
         T_5=InvariantScores.format_tree(S,quintet,score,'dump.trees')
         
         print ' Newick of the above 5 - taxon tree '
         InvariantScores.print_newick_string(S)
         print ' scores',score
-        out=InvariantScores.scores_edges_root(T_5,score)
+        out,root_score,no_min_score=InvariantScores.scores_edges_root(T_5,score)
        
         
         #print 'violations ',violations
        
         
         print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
-        my_dict_penalty_1[out].append( mc +'/'+ replicate )
-print 'Discussion \n',my_dict_penalty_1 
+        my_dict_penalty_1[out].append( [ mc +'/'+ str(replicate) ,root_score, no_min_score] )
+print ' \n ************************************************** \n                   Discussion \n ************************************************** \n'
+print ' CASE 1: root is not properly scored '
+count =0
+for i in my_dict_penalty_1[0]:
+    print i[0],'-->', i[1], ' min score =', i[2]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 2: root gets min score and both root edges get same score and No edge other than root gets the best score'
+for i in my_dict_penalty_1[1]:
+    print i[0],'-->', i[1]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 3: root gets min score and both root edges get same score '
+for i in my_dict_penalty_1[2]:
+    print i[0],'-->', i[1], ' # edges other than root gets the min score = ', i[2]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 4: root gets min score but both edges get different score and No edge other than root gets the best score '
+for i in my_dict_penalty_1[3]:
+    print i[0],'-->', i[1]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 5: root gets min score but both edges get different score '
+for i in my_dict_penalty_1[4]:
+    print i[0],'-->', i[1], ' # edges other than root gets the min score = ', i[2]
+    count=count+1
+print ' Count = ',count
 '''
-        
+'''       
         print '\n  Corresponding 5-taxon tree - PENALTY FUNCTION 2 '
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
         treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
@@ -103,7 +141,7 @@ print 'Discussion \n',my_dict_penalty_1
         
         print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
         
-        '''
+        
         
        
         #f_write.write('\n\n 10-taxon datatset/ model condition - '+str(mc)+'/R'+str(replicate)+'/ \n U = ')
@@ -112,11 +150,95 @@ print 'Discussion \n',my_dict_penalty_1
         
 #f_write.close()
        
-  
-
 '''
 
 #PART 4
+#It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
+#for each edge it selects the nearest quintet
+#f_write=open('/Users/kajori/Box Sync/UIUC/Tandy/invariant_rooting/output_2/U_distribution_10.txt','a')
+my_dict_penalty_1={}
+my_dict_penalty_1[0]=[]
+my_dict_penalty_1[1]=[]
+my_dict_penalty_1[2]=[]
+my_dict_penalty_1[3]=[]
+my_dict_penalty_1[4]=[]
+print ' Function = stat'
+for mc in model_coditions:
+    for replicate in range(1,11):
+        if (replicate>=10): in_path='/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/'+str(replicate)
+        else: in_path='/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)
+        print '\n\n\n ********** Model Condition -'+mc+'/ Replicate '+str(replicate)+ '/ ********** '
+        
+        
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
+        print 'before derooting '
+        InvariantScores.print_newick_string(S)
+        
+        print ' Original tree with index of edges in post-order iteration'
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
+        InvariantScores.my_print_tree(S,[-99] * 100,'dump.txt') #[-99] * 100 since we donot want the edges to be scoes. We just want the post-order index
+        
+       
+        score=[]
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
+        T= dendropy.Tree(S)
+        treelist =  dendropy.TreeList.get_from_path(in_path+'/truegenetrees','newick', taxon_set = S.taxon_set) 
+        length=len([e for e in T.postorder_edge_iter()])-1
+        for i in range(0,length):
+            S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
+            T= dendropy.Tree(S)
+            H,U,q=InvariantScores.total_quintet_score_distance_kajori(S,i,treelist,'stat')
+            score.append(H)
+            print ' edge index = ',i , ' quintet = ', q
+             
+        
+        print '\n  Corresponding scored tree  '
+        print ' scores',score
+        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
+        T= dendropy.Tree(S)
+        out,root_score,no_min_score=InvariantScores.scores_edges_root(T,score)
+       
+        
+        #print 'violations ',violations
+       
+        
+        print '\n Analysis:- \n 1)best score on the dataset - ',min(score),'\n 2) # edges that have the best score - ',score.count(min(score))
+        my_dict_penalty_1[out].append( [ mc +'/'+ str(replicate) ,root_score, no_min_score] )
+print ' \n ************************************************** \n                   Discussion \n ************************************************** \n'
+print ' CASE 1: root is not properly scored '
+count =0
+for i in my_dict_penalty_1[0]:
+    print i[0],'-->', i[1], ' min score =', i[2]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 2: root gets min score and both root edges get same score and No edge other than root gets the best score'
+for i in my_dict_penalty_1[1]:
+    print i[0],'-->', i[1]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 3: root gets min score and both root edges get same score '
+for i in my_dict_penalty_1[2]:
+    print i[0],'-->', i[1], ' # edges other than root gets the min score = ', i[2]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 4: root gets min score but both edges get different score and No edge other than root gets the best score '
+for i in my_dict_penalty_1[3]:
+    print i[0],'-->', i[1]
+    count=count+1
+print ' Count = ',count
+count =0
+print '\n CASE 5: root gets min score but both edges get different score '
+for i in my_dict_penalty_1[4]:
+    print i[0],'-->', i[1], ' # edges other than root gets the min score = ', i[2]
+    count=count+1
+print ' Count = ',count
+
+'''
+
+#PART 5
 #It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
 #using MORE LOCAL quintets and reports the scores
 
