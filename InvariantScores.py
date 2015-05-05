@@ -249,8 +249,8 @@ class QuartetsInfo:
                 u[2] = s[q2[i]]
         return u
         
-#L same as get_freqs, i,j are indices of L specified as cherry of interest
-    def quartet_score(self,L,i,j):
+#L same as get_freqs, i,j are indices of L specified as cherry of interest, func is string with name of penalty function 
+    def quartet_score(self,L,i,j,func):
         a = [i,j]
         a.sort()
         f1, f2, f3 = self.get_freqs(L)
@@ -263,10 +263,12 @@ class QuartetsInfo:
         else:
             print "problem with quartet score input indices"
             print L, i, j
-        a12 = min(u1-u2,0)
-        a13 = min(u1-u3,0)
-        score = abs(u2-u3) + (-1)*a12 + (-1)*a13
-        return score
+        if func == 'inv3':
+            score = inv3(u1, u2, u3)
+        #a12 = min(u1-u2,0)
+        #a13 = min(u1-u3,0)
+        #score = abs(u2-u3) + (-1)*a12 + (-1)*a13
+            return score
 
     def quartet_labels_dict(self):
         g = self.quartet_dict()
@@ -290,12 +292,12 @@ class QuartetsInfo:
         for k in g:
             if '(' + D1 + ',' + D2 + ')' in k:
                 #print k
-                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2))
+                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2),'inv3')
                 #print newscore
                 score = score + newscore
             if '(' + D2 + ',' + D1 + ')' in k:
                 #print k
-                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2))
+                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2),'inv3')
                 #print newscore
                 score = score + newscore
         return score
@@ -314,7 +316,7 @@ class QuartetsInfo:
         #print treelist
         score = 0
         for k in range(len(treelist)):
-                newscore = self.quartet_score(treelist[k],0,1)
+                newscore = self.quartet_score(treelist[k],0,1,'inv3')
                 #print newscore
                 score = score + newscore
         return score
@@ -504,10 +506,10 @@ class SubsetPenalties:
         #print SQ
         score = score1 + score2
         for i in range(len(AQ)):
-            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2])
+            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2],'inv3')
             #print score
         for j in range(len(SQ)): 
-            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2])
+            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2],'inv3')
         return score
 
 #problem is finding min NONZERO entry here. 

@@ -5,6 +5,27 @@ import matrixmaker
 import pprint
 import numpy as np
 
+class TestQuartetInvariantScores(unittest.TestCase):
+    def test_inv3(self):
+        u1, u2, u3 = 0, 0, 0 #when u1 > u2 = u3 everything is right
+        score = InvariantScores.inv3(u1,u2,u3)
+        self.assertEqual(score,50)
+
+    def test_inv3_u2_ne_u3(self):
+        u1, u2, u3 = 3,2,1
+        score = InvariantScores.inv3(u1,u2,u3)
+        self.assertEqual(score,1)
+
+    def test_inv3_u1_lt_u2(self):
+        u1, u2, u3 = 2,3,1
+        score = InvariantScores.inv3(u1,u2,u3)
+        self.assertEqual(score,3)
+
+    def test_inv3_u1_lt_u3(self):
+        u1, u2, u3 = 2,1,3
+        score = InvariantScores.inv3(u1,u2,u3)
+        self.assertEqual(score,3)
+
 class TestInvariantScores3(unittest.TestCase):
     def test_inv3(self):
         u1, u2, u3 = 2, 1, 1 #when u1 > u2 = u3 everything is right
@@ -114,16 +135,16 @@ class TestQuartetStuff(unittest.TestCase):
         d = info.quartet_dict()
         e = info.get_freqs(['a', 'b', 'c', 'd'])
         f = info.get_freqs(['b', 'c', 'd', 'e'])
-        escore = info.quartet_score(['a', 'b', 'c', 'd'],0,1)
-        escore2 = info.quartet_score(['a', 'b', 'c', 'd'],2,3)
-        escore3 = info.quartet_score(['a', 'b', 'c', 'd'],0,3)
-        fscore = info.quartet_score(['b', 'c', 'd', 'e'],0,1)
-        fscore2 = info.quartet_score(['b', 'c', 'd', 'e'],0,2)
-        gscore = info.quartet_score(['a','b','c','e'],0,1)
-        acdescore = info.quartet_score(['a','c','d','e'],0,1)
-        aecdscore = info.quartet_score(['a','c','d','e'],0,3)
-        hscore = info.quartet_score(['a','b','d','e'],0,1)
-        becdscore = info.quartet_score(['b', 'c', 'd', 'e'],0,3)
+        escore = info.quartet_score(['a', 'b', 'c', 'd'],0,1,'inv3')
+        escore2 = info.quartet_score(['a', 'b', 'c', 'd'],2,3,'inv3')
+        escore3 = info.quartet_score(['a', 'b', 'c', 'd'],0,3,'inv3')
+        fscore = info.quartet_score(['b', 'c', 'd', 'e'],0,1,'inv3')
+        fscore2 = info.quartet_score(['b', 'c', 'd', 'e'],0,2,'inv3')
+        gscore = info.quartet_score(['a','b','c','e'],0,1,'inv3')
+        acdescore = info.quartet_score(['a','c','d','e'],0,1,'inv3')
+        aecdscore = info.quartet_score(['a','c','d','e'],0,3,'inv3')
+        hscore = info.quartet_score(['a','b','d','e'],0,1,'inv3')
+        becdscore = info.quartet_score(['b', 'c', 'd', 'e'],0,3,'inv3')
         self.assertEqual(escore,1)
         self.assertEqual(fscore,1)
         self.assertEqual(fscore2,4) 
@@ -137,26 +158,26 @@ class TestQuartetStuff(unittest.TestCase):
 
     def testQuartetScores2(self):
         info = InvariantScores.QuartetsInfo("R1.10gene.tre.quartets")
-        score1 = info.quartet_score(['S1', 'S10', 'S2', 'S3'],0,1)
-        score2 = info.quartet_score(['S2', 'S10', 'S1', 'S3'],0,1)
+        score1 = info.quartet_score(['S1', 'S10', 'S2', 'S3'],0,1,'inv3')
+        score2 = info.quartet_score(['S2', 'S10', 'S1', 'S3'],0,1,'inv3')
         self.assertEqual(score1,4)
         self.assertEqual(score2,2)
     
     def testQuartetScores3(self):
         info = InvariantScores.QuartetsInfo("11treesquartets")
-        score1 = info.quartet_score(['S1','S2','S4','S11'],0,3)
+        score1 = info.quartet_score(['S1','S2','S4','S11'],0,3,'inv3')
         self.assertEqual(score1,3)
-        score2 = info.quartet_score(['S2','S5','S1','S11'],2,3)
+        score2 = info.quartet_score(['S2','S5','S1','S11'],2,3,'inv3')
         self.assertEqual(score2,1)
-        score3 = info.quartet_score(['S2','S5','S1','S11'],0,1) 
+        score3 = info.quartet_score(['S2','S5','S1','S11'],0,1,'inv3') 
         self.assertEqual(score3,1)
-        score4 = info.quartet_score(['S1','S2','S5','S11'],0,3)
+        score4 = info.quartet_score(['S1','S2','S5','S11'],0,3,'inv3')
         self.assertEqual(score4,1)
-        score5 = info.quartet_score(['S1','S11','S4','S5'],0,1)
+        score5 = info.quartet_score(['S1','S11','S4','S5'],0,1,'inv3')
         self.assertEqual(score5,3) 
-        score6 = info.quartet_score(['S1','S4','S2','S5'],2,3)
+        score6 = info.quartet_score(['S1','S4','S2','S5'],2,3,'inv3')
         self.assertEqual(score6,0)
-        score7 = info.quartet_score(['S11','S4','S2','S5'],0,1)
+        score7 = info.quartet_score(['S11','S4','S2','S5'],0,1,'inv3')
         self.assertEqual(score7,1)
 
 
