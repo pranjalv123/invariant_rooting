@@ -128,8 +128,10 @@ for i in my_dict_penalty_1[4]:
     print i[0],'-->', i[1], ' # edges other than root gets the min score = ', i[2]
     count=count+1
 print ' Count = ',count
+
 '''
-'''       
+ 
+'''
         print '\n  Corresponding 5-taxon tree - PENALTY FUNCTION 2 '
         S = dendropy.Tree.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/s_tree.trees','newick') #kajori
         treelist =  dendropy.TreeList.get_from_path('/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)+'/truegenetrees','newick', taxon_set = S.taxon_set) 
@@ -164,7 +166,7 @@ my_dict_penalty_1[3]=[]
 my_dict_penalty_1[4]=[]
 print ' Function = stat'
 for mc in model_coditions:
-    for replicate in range(1,11):
+    for replicate in range(1,2):
         if (replicate>=10): in_path='/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/'+str(replicate)
         else: in_path='/Users/kajori/Box Sync/UIUC/Tandy/Data_Set/10-taxon/'+mc+'/0'+str(replicate)
         print '\n\n\n ********** Model Condition -'+mc+'/ Replicate '+str(replicate)+ '/ ********** '
@@ -184,21 +186,13 @@ for mc in model_coditions:
         T= dendropy.Tree(S)
         treelist =  dendropy.TreeList.get_from_path(in_path+'/truegenetrees','newick', taxon_set = S.taxon_set) 
         length=len([e for e in T.postorder_edge_iter()])-1
+        
         for i in range(0,length):
             S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
             T= dendropy.Tree(S)
+            print ' edge index = ',i , ' quintet = ', q
             H,U,q=InvariantScores.total_quintet_score_distance_kajori(S,i,treelist,'stat')
             score.append(H)
-            print ' edge index = ',i , ' quintet = ', q
-             
-        
-        print '\n  Corresponding scored tree  '
-        print ' scores',score
-        S = dendropy.Tree.get_from_path(in_path+'/s_tree.trees','newick') #kajori
-        T= dendropy.Tree(S)
-        out,root_score,no_min_score=InvariantScores.scores_edges_root(T,score)
-       
-        
         #print 'violations ',violations
        
         
@@ -236,8 +230,8 @@ for i in my_dict_penalty_1[4]:
     count=count+1
 print ' Count = ',count
 
-'''
 
+'''
 #PART 5
 #It runs tests on the 10-taxon dataset  on 4 mode conditions, 3 replicates
 #using MORE LOCAL quintets and reports the scores

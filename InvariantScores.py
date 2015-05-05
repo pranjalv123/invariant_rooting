@@ -48,6 +48,7 @@ def inv3I(u1, u2, u3):
     score (-1)*a12 + (-1)*a13
     return score
 
+'''
 #inv51 is for the balanced species tree 5 leaves (((a,b),c),(d,e))
 def inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     a12 = min(u1-u2,0)
@@ -68,8 +69,29 @@ def inv51(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     if (u5>u7):  error_str =  error_str+  '\n  u7 > u5 ,'+ str(u5)+'>'+ str(u7)+ ', penalty  = ' + str(u5-u7)
     
     return score,error_str 
+'''
 
 
+#inv51_func_part2 is for the balanced species tree 5 leaves (((a,b),c),(d,e))
+#inv51_func_part2 is used in additon to inv51_func
+#it has additional equalities turned into inequalities
+def inv51_func_part2(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
+    a5_15,error_str_5_15 = penalty('u5',u5,'u15',u15,user_function) # abs(u7-u15) and u5>u7 therefore u5>15
+    a2_15,error_str_2_15 = penalty('u2',u2,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u2>u5 therefore u2>15
+    a4_15,error_str_4_15 = penalty('u4',u4,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u4>u5 therefore u4>15
+    
+    a2_12,error_str_2_12 = penalty('u2',u2,'u12',u12,user_function) # abs(u5-u12) and u2>u5 therefore u2>u12
+    a4_12,error_str_4_12 = penalty('u4',u4,'u12',u12,user_function) # abs(u5-u12) and u4>u5 therefore u4>u12
+    a1_13,error_str_1_13 = penalty('u1',u1,'u13',u13,user_function) # abs(u4-u13) and u1>u4 therefore u1>u13
+    a13,error_str_13     = penalty('u1',u1,'u3',u3,user_function) # abs(u2-u3) and u1>u2 therefore u1>u3
+    
+    score = a5_15 +  a2_15 + a4_15 +a2_12 + a4_12 + a1_13 + a13
+
+    error_str = error_str_5_15 +  error_str_2_15 + error_str_4_15 +error_str_2_12 + error_str_4_12 + error_str_1_13 + error_str_13 
+    return score,error_str 
+
+#inv51_func is for the balanced species tree 5 leaves (((a,b),c),(d,e))
+#it is just like inv51 but can implement more more penalty function other than just 'diff'
 def inv51_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
     a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
     a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
@@ -78,11 +100,13 @@ def inv51_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,
     a57,error_str_57 = penalty('u5',u5,'u7',u7,user_function)
     score1 = a12 + a14 + a25 + a45 + a57
     #score2 = abs(u14 - u15) + abs(u11-u15) + abs(u10-u15) + abs(u9-u12) + abs(u8-u15) + abs(u7-u15) + abs(u6-u12) + abs(u5-u12) + abs(u4-u13) + abs(u2-u3)
-    score = score1 #+ score2
-    error_str = error_str_12 +error_str_14+error_str_25+error_str_45+error_str_57
+    score3,err_str3=inv51_func_part2(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
+    score = score1 + score3 #+ score2
+    error_str = error_str_12 +error_str_14+error_str_25+error_str_45+error_str_57 + err_str3
     if bool(error_str):error_str = 'violation  inv51 - balanced tree \n'+ error_str
     return score,error_str 
 
+'''   
 #inv52 is for the caterpillar tree 5 leaves ((((a,b),c),d),e)
 def inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15): 
     a12 = min(u1-u2,0)
@@ -109,8 +133,35 @@ def inv52(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     if (u6>u5):  error_str =  error_str+ '\n  u6 > u5 ,' + str(u6)+'>'+ str(u5)+ ', penalty  = ' + str(u6-u5)
     
     return score,error_str 
+'''
 
-#inv52_func is for the caterpillar tree 5 leaves ((((a,b),c),d),e)
+#inv52_func_part2 is for the balanced species tree 5 leaves (((a,b),c),(d,e))
+#inv52_func_part2 is used in additon to inv52_func
+#it has additional equalities turned into inequalities
+def inv52_func_part2(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
+    
+    a5_15,error_str_5_15 = penalty('u5',u5,'u15',u15,user_function) # abs(u7-u15) and u5>u7 therefore u5>15
+    a2_15,error_str_2_15 = penalty('u2',u2,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u2>u5 therefore u2>u15
+    a1_15,error_str_1_15 = penalty('u1',u1,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u2>u5 and u1>u2 therefore u1>u15
+    a3_15,error_str_3_15 = penalty('u3',u3,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u2>u5 and u3>u2 therefore u3>u15
+    a4_15,error_str_4_15 = penalty('u4',u4,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u4>u5 therefore u4>u15
+    a6_15,error_str_6_15 = penalty('u6',u6,'u15',u15,user_function) # abs(u7-u15) and u5>u7 and u6>u5 therefore u6>u15
+    
+    a39,error_str_39 = penalty('u3',u3,'u9',u9,user_function) # abs(u6-u9) and u3>u6 therefore u3>u9
+    
+    a6_12,error_str_6_12 = penalty('u6',u6,'u12',u12,user_function) #abs(u5-u12)  and u6>u5 therefore  u6>u12
+    a2_12,error_str_2_12 = penalty('u2',u2,'u12',u12,user_function) #abs(u5-u12)  and u2>u5 therefore  u2>u12
+    a4_12,error_str_4_12 = penalty('u4',u4,'u12',u12,user_function) #abs(u5-u12)  and u4>u5 therefore  u4>u12
+    a1_12,error_str_1_12 = penalty('u1',u1,'u12',u12,user_function) #abs(u5-u12)  and u2>u5 and u1>u2 therefore  u1>u12
+    a3_12,error_str_3_12 = penalty('u3',u3,'u12',u12,user_function) #abs(u5-u12)  and u2>u5 and u3>u2 therefore  u3>u12
+    a1_13,error_str_1_13 = penalty('u1',u1,'u13',u13,user_function) # abs(u4-u13) and u1>u4 therefore u1>u13
+    
+    score = a5_15 +  a2_15 + a1_15+a3_15+ a4_15 +a6_15+ a39+ a6_12+ a2_12+ a4_12+ a1_12+ a3_12  + a1_13 
+    error_str= error_str_5_15 +  error_str_2_15 + error_str_1_15+ error_str_3_15+ error_str_4_15 + error_str_6_15+ error_str_39+ error_str_6_12+ error_str_2_12+ error_str_4_12+ error_str_1_12+ error_str_3_12  + error_str_1_13 
+    return score,error_str 
+    
+#inv52_func is for the balanced species tree 5 leaves (((a,b),c),(d,e))
+#it is just like inv52 but can implement more more penalty function other than just 'diff'
 def inv52_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function): 
     a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
     a14,error_str_14 = penalty('u1',u1,'u4',u4,user_function)
@@ -122,11 +173,13 @@ def inv52_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,
     a65,error_str_65 = penalty('u6',u6,'u5',u5,user_function)
     score1 = a12 + a14 + a25 + a45 + a57 + a32 + a36 + a65
     #score2 = abs(u14-u15) + abs(u11-u15) + abs(u10-u15) + abs(u8-u15) + abs(u7-u15) + abs(u6-u9) + abs(u5-u12) + abs(u4-u13) + abs(u2-u3 + u9-u12)
-    score = score1 #+ score2
-    error_str = error_str_12 +error_str_14+error_str_25+error_str_45+error_str_57+ error_str_32 + error_str_36 + error_str_65
+    score3,err_str3=inv52_func_part2(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
+    score = score1 + score3 #+ score2
+    error_str = error_str_12 +error_str_14+error_str_25+error_str_45+error_str_57+ error_str_32 + error_str_36 + error_str_65 + err_str3
     if bool(error_str):error_str = 'violation  inv52 - caterpillar tree \n'+ error_str
     return score,error_str 
 
+'''
 #inv53 is for the pseudocaterpillar tree (((a,b),(d,e)),c)
 def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     a12 = min(u1-u2,0)
@@ -148,8 +201,27 @@ def inv53(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15):
     if (u5>u4):error_str =  error_str+ '  u5 > u4 ,'+ str(u5)+'>'+ str(u4)+ ', penalty  = ' + str(u5-u4)
     if (u5>u8):error_str =  error_str+ '  u5 > u8 ,'+ str(u5)+'>'+ str(u8)+ ', penalty  = ' + str(u5-u8)
     
-    return score,error_str 
+    return score,error_str    
+'''
 
+#inv53_func_part2 is for the pseudocaterpillar tree (((a,b),(d,e)),c)
+#inv53_func_part2 is used in additon to inv53_func
+#it has additional equalities turned into inequalities
+def inv53_func_part2(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
+    
+    a1_11,error_str_1_11 = penalty('u1',u1,'u11',u11,user_function) # abs(u8-u11) and u1>u8 therefore u1>u11
+    a2_15,error_str_2_15 = penalty('u2',u2,'u15',u15,user_function) # abs(u5-u15) and u2>u5 therefore u2>u15
+    a4_15,error_str_4_15 = penalty('u4',u4,'u15',u15,user_function) # abs(u5-u15) and u4>u5 therefore u4>u15
+    a8_15,error_str_8_15 = penalty('u8',u8,'u15',u15,user_function) # abs(u5-u15) and u8>u5 therefore u8>u15
+    a1_15,error_str_1_15 = penalty('u1',u1,'u15',u15,user_function) # abs(u5-u15) and u2>u5 and u1>u2 therefore u1>u15
+    
+    a1_13,error_str_1_13 = penalty('u1',u1,'u13',u13,user_function) # abs(u4-u13) and u1>u4 therefore u1>u13
+    a13,error_str_13 = penalty('u1',u1,'u3',u3,user_function) # abs(u2-u3) and u1>u2therefore u1>u3
+
+    score =a1_11 +a2_15 + a4_15 +  a8_15 + a1_15+ a1_13+ a13 
+    error_str_= error_str_1_11 +error_str_2_15 + error_str_4_15 +  error_str_8_15 + error_str_1_15+ error_str_1_13+ error_str_13 
+    return score,error_str 
+    
 #inv53_func is for the pseudocaterpillar tree (((a,b),(d,e)),c)
 def inv53_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function):
     a12,error_str_12 = penalty('u1',u1,'u2',u2,user_function)
@@ -160,8 +232,9 @@ def inv53_func(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,
     a85,error_str_85 = penalty('u8',u8,'u5',u5,user_function)
     score1 = a12 + a14 + a18 + a25 + a45 + a85
     #score2 = abs(u14-u15) + abs(u12-u15) + abs(u10-u15) + abs(u9-u15) + abs(u8-u11) + abs(u7-u15) + abs(u6-u15) + abs(u5-u15) + abs(u4-u13) + abs(u2-u3)
-    score = score1 #+ score2
-    error_str = error_str_12 + error_str_14 + error_str_18 + error_str_25 + error_str_45 + error_str_85
+    score3,err_str3=inv52_func_part2(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15,user_function)
+    score = score1 + score3  #+ score2
+    error_str = error_str_12 + error_str_14 + error_str_18 + error_str_25 + error_str_45 + error_str_85+ err_str3
     if bool(error_str):error_str = 'violation  inv53 - pseudocaterpillar tree \n'+ error_str
     return score,error_str 
     
@@ -245,7 +318,7 @@ def basic_score_quintet(S,l,treelist,user_function):
    
     U = get_dist(l,treelist)
     [u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15] = U[0][1] 
-    scorefuncs= [inv51, inv52, inv53]
+    scorefuncs= [inv51_func, inv52_func, inv53_func]
   
     if (user_function!='diff'):
         if rooted_shape == shapes[0]:
@@ -465,15 +538,37 @@ def total_quintet_score_distance_kajori(S,i,treelist,user_function):
     taxon_1,taxon_2=nearest_quintet_kajori(copy.deepcopy(S),i)
     
     edgelist_postorder = [e for e in T.postorder_edge_iter()]
+    pos=0
+    
+    '''
     for e in edgelist_postorder:
+        
         e.length=1
-    T.reroot_at_edge(edgelist_postorder[i])
+        if( i==19):
+            print ' pos = ',pos ,' edge =', e.oid, '  ',s
+            pos=pos+1
+            
+    '''
+    
+    #HACK 2 #TALK TO RUTH
+    if (i!=len(edgelist_postorder)-1): T.reroot_at_edge(edgelist_postorder[i])
     #print 'taxon_1,taxon_2',taxon_1,taxon_2
     
     quintet_1=sort_list_distance_kajori(T,taxon_1)
     quintet_2=sort_list_distance_kajori(T,taxon_2)
     
     #print 'quintet_1,quintet_2',quintet_1,quintet_2
+    #HACK 3
+    if (i==len(edgelist_postorder)-1): 
+        if (quintet_2==[]) : 
+            quintet=quintet_1
+        else: quintet= quintet_2
+        T= dendropy.Tree(S)     
+        H,U,error_str = basic_score_quintet(T,quintet,treelist,user_function)
+        #assert sum(U)==1000
+        return (H,U,quintet)       
+    
+    
     quintet=[]
     (flag_1,flag_2,pos_1,pos_2)=(0,0,0,0)
     while (pos_1+pos_2 < 5 and pos_1 < len(quintet_1)  and pos_2 < len(quintet_2) ):
@@ -505,7 +600,8 @@ def total_quintet_score_distance_kajori(S,i,treelist,user_function):
         quintet[4]=quintet_2[0]
     #print 'final quintet',quintet,'len',len(quintet)
     
-    T= dendropy.Tree(S)
+    
+    T= dendropy.Tree(S)     
     T.reroot_at_edge(edgelist_postorder[i])
     H,U,error_str = basic_score_quintet(T,quintet,treelist,user_function)
     #assert sum(U)==1000
