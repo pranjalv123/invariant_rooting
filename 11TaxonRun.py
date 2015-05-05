@@ -50,6 +50,8 @@ print A.scored_matrix()
 
 end1 = time.time()
 
+print 'time to make scored matrix is'
+
 print end1- end0
 
 print 'making clades'
@@ -57,6 +59,8 @@ print 'making clades'
 print A.clades()
 
 end2 = time.time()
+
+print 'time to make clades was'
 
 print end2-end1
 
@@ -75,5 +79,7 @@ H.write(speciestree.as_newick_string()+';')
 H.close()
 
 end3 = time.time()
+
+print 'time to make tree was'
 
 print end3-end2
