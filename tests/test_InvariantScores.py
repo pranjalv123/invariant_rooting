@@ -7,7 +7,7 @@ import numpy as np
 
 class TestQuartetInvariantScores(unittest.TestCase):
     def test_inv3(self):
-        u1, u2, u3 = 0, 0, 0 #when u1 > u2 = u3 everything is right
+        u1, u2, u3 = 0, 25, 25 #when u1 > u2 = u3 everything is right
         score = InvariantScores.inv3(u1,u2,u3)
         self.assertEqual(score,50)
 

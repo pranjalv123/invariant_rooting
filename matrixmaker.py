@@ -4,7 +4,11 @@ import numpy as np
 class MatrixMaker:
     def __init__(self, labels, setlist):
         self.labels = labels
+        #print 'labels are'
+        #print labels
         self.setlist = setlist
+        #print 'setlist is'
+        #print setlist
         self.binlabels = {}
         for i in range(len(labels)):
             self.binlabels[labels[i]] = 2**i
