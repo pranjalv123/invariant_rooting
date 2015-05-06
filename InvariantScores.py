@@ -223,7 +223,7 @@ class QuartetsInfo:
         with open(self.filename) as f:
             for line in f:
                 (key,val) = line.split()
-                d[key] = int(val)
+                d[key] = float(val)
         return d
 
 #L is a list of four labels that are strings-alphabetical order required
