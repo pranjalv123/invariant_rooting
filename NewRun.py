@@ -3,15 +3,19 @@ import matrixmaker
 import InvariantScores
 import time
 import sys
-
+from complement_quartets import complementquartets
 
 quartetsfile = str(sys.argv[1])
 
-cladesfile = str(sys.argv[2])
+complementedquartetsfile = str(sys.argv[2])
 
-treefilename = str(sys.argv[3])
+cladesfile = str(sys.argv[3])
 
-L = ['I', 'H', 'F', 'G', 'E', 'A', 'B', 'D', 'C', 'J']
+treefilename = str(sys.argv[4])
+
+L = complementquartets(open(quartetsfile, 'r'), open(complementedquartetsfile, 'w'))
+
+#L = ['I', 'H', 'F', 'G', 'E', 'A', 'B', 'D', 'C', 'J']
 
 print 'taxon set is'
 print L
@@ -31,13 +35,13 @@ print 'is number of clades from input file'
 
 print len(Subsets)
 
-print Subsets
+#print Subsets
 
 start = time.time()
 
 print 'Making Class instance SubsetPenalties'
 
-A = InvariantScores.SubsetPenalties(L, Subsets, quartetsfile)
+A = InvariantScores.SubsetPenalties(L, Subsets, complementedquartetsfile)
 
 print 'time for class instance is'
 

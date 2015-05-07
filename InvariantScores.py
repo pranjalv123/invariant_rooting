@@ -269,6 +269,8 @@ class QuartetsInfo:
         #a13 = min(u1-u3,0)
         #score = abs(u2-u3) + (-1)*a12 + (-1)*a13
             return score
+        else:
+            return u1
 
     def quartet_labels_dict(self):
         g = self.quartet_dict()
@@ -506,10 +508,10 @@ class SubsetPenalties:
         #print SQ
         score = score1 + score2
         for i in range(len(AQ)):
-            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2],'inv3')
+            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2], None)
             #print score
         for j in range(len(SQ)): 
-            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2],'inv3')
+            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2], None)
         return score
 
 #problem is finding min NONZERO entry here. 
@@ -551,6 +553,9 @@ class SubsetPenalties:
     def scored_matrix(self):
         SM = np.zeros((len(self.setlist),len(self.setlist)))
         SM.fill(np.inf)
+        print self.setlist
+        print len(self.setlist)
+        setlist_index = dict([(tuple(j), i) for i,j in enumerate(self.setlist)])
         for i in range(len(self.setlist)):
             if len(self.setlist[i]) == 1:
                 SM[i,i] = 0
@@ -560,18 +565,18 @@ class SubsetPenalties:
                 SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
                 SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
             if len(self.setlist[i]) > 2:
-                clabels = copy.copy(self.setlist[i])
-                clist = copy.copy(self.setlist)
+                clabels = set(copy.copy(self.setlist[i]))
+                clist = set([tuple(x) for x in copy.copy(self.setlist)])
                 while len(clist) > 0:
-                        one = clist.pop(0)
-                        onedex = self.setlist.index(one)
+                        one = clist.pop()
+                        onedex = setlist_index[one]
                         if self.matrix[i,onedex] == 1:
-                            two = list(set(clabels) - set(one))
-                            one.sort()
-                            two.sort()
+                            two = list(clabels - set(one))
+                            one = tuple(sorted(one))
+                            two = tuple(sorted(two))
                             if two in clist:
                                 clist.remove(two)
-                                twodex = self.setlist.index(two)
+                                twodex = setlist_index[tuple(two)]
                                 SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                                 SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                         #else: 
