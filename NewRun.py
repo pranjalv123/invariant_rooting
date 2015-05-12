@@ -3,15 +3,18 @@ import matrixmaker
 import InvariantScores
 import time
 import sys
+from complement_quartets import complementquartets
 
+fixedfile = str(sys.argv[1])
+quartetsfile = str(sys.argv[2])
 
-quartetsfile = str(sys.argv[1])
+cladesfile = str(sys.argv[3])
 
-cladesfile = str(sys.argv[2])
-
-treefilename = str(sys.argv[3])
+treefilename = str(sys.argv[4])
 
 L = ['I', 'H', 'F', 'G', 'E', 'A', 'B', 'D', 'C', 'J']
+
+L =[int (i) for i in  complementquartets(open(fixedfile), open(quartetsfile, 'w'))]
 
 print 'taxon set is'
 print L

@@ -209,21 +209,57 @@ def find_best_edge_by_total_quintet_score(S,treelist):
     T.reroot_at_edge(edgelist[best_edge])
     return T
 
+
+class Quartet:
+    def __init__(self, qt):
+#        ((self.a1, self.a2), (self.b1, self.b2)) = self.canonicalize(((a1, a2), (b1, b2)))
+        if type(qt) == str:
+            a, b = qt.split('),(') 
+            a1, a2 = a.replace('(', '').replace(')', '').replace(';', '').split(',')
+            b1, b2 = b.replace('(', '').replace(')', '').replace(';', '').split(',')
+            self.data = self.canonicalize(((int(a1), int(a2)), (int(b1), int(b2))))
+        else:
+            self.data = self.canonicalize(qt)
+    def canonicalize(self, ((a1, a2), (b1, b2))):
+        if a1 < a2:
+            a = (a1, a2)
+        else:
+            a = (a2, a1)
+        if b1 < b2:
+            b = (b1, b2)
+        else:
+            b = (b2, b1)
+        if a < b:
+            return (a, b)
+        else:
+            return (b, a)
+                
+    def __eq__(self, other):
+        return self.data == other.data
+    def __hash__(self):
+        return hash(self.data)
+    def __repr__(self):
+        return str(self.data)
+
 #quartetsfile is a string name of file, file must be in working directory
 class QuartetsInfo:
     def __init__(self,quartetsfile):
         self.filename = quartetsfile
-        #self.quartet_dict = {}
+        self.quartet_dict_ = {}
+        self.quartet_labels_dict_ = {}
         #with open(quartetsfile) as f:
             #for line in f:
                 #(key,val) = line.split()
                 #self.quartet_dict[key] = int(val)
     def quartet_dict(self):
+        if len(self.quartet_dict_):
+            return self.quartet_dict_
         d = {}
         with open(self.filename) as f:
             for line in f:
                 (key,val) = line.split()
-                d[key] = float(val)
+                d[Quartet(key)] = float(val)
+        self.quartet_dict_ = d
         return d
 
 #L is a list of four labels that are strings-alphabetical order required
@@ -234,20 +270,41 @@ class QuartetsInfo:
         #for i in range(3):
         #    if q[i] in s:
         #        u[i] = s[q[i]]
-        u = [0,0,0]
-        q0 = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[1]+'),('+L[3]+','+L[2]+'));','(('+L[1]+','+L[0]+'),('+L[2]+','+L[3]+'));','(('+L[1]+','+L[0]+'),('+L[3]+','+L[2]+'));', '(('+L[2]+','+L[3]+'),('+L[0]+','+L[1]+'));','(('+L[2]+','+L[3]+'),('+L[1]+','+L[0]+'));','(('+L[3]+','+L[2]+'),('+L[0]+','+L[1]+'));','(('+L[3]+','+L[2]+'),('+L[1]+','+L[0]+'));']
-        q1 = ['(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[3]+','+L[1]+'));','(('+L[2]+','+L[0]+'),('+L[1]+','+L[3]+'));','(('+L[2]+','+L[0]+'),('+L[3]+','+L[1]+'));','(('+L[1]+','+L[3]+'),('+L[0]+','+L[2]+'));','(('+L[1]+','+L[3]+'),('+L[2]+','+L[0]+'));','(('+L[3]+','+L[1]+'),('+L[0]+','+L[2]+'));','(('+L[3]+','+L[1]+'),('+L[2]+','+L[0]+'));']
-        q2 = ['(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));', '(('+L[0]+','+L[3]+'),('+L[2]+','+L[1]+'));','(('+L[3]+','+L[0]+'),('+L[1]+','+L[2]+'));', '(('+L[3]+','+L[0]+'),('+L[2]+','+L[1]+'));','(('+L[1]+','+L[2]+'),('+L[0]+','+L[3]+'));','(('+L[1]+','+L[2]+'),('+L[3]+','+L[0]+'));','(('+L[2]+','+L[1]+'),('+L[0]+','+L[3]+'));','(('+L[2]+','+L[1]+'),('+L[3]+','+L[0]+'));']
-        for i in range(8):
-            if q0[i] in s:
-                u[0] = s[q0[i]]
-        for i in range(8):
-            if q1[i] in s:
-                u[1] = s[q1[i]]
-        for i in range(8):
-            if q2[i] in s:
-                u[2] = s[q2[i]]
+        
+        q0 = Quartet(((L[0], L[1]), (L[2], L[3])))
+        q1 = Quartet(((L[0], L[2]), (L[1], L[3])))
+        q2 = Quartet(((L[0], L[3]), (L[1], L[2])))
+
+        u = [0, 0, 0]
+        if q0 in s:
+            u[0] = s[q0]
+        else:
+            print "ERROR", q0
+        if q1 in s:
+            u[1] = s[q1]
+        else:
+            print "ERROR", q1
+        if q2 in s:
+            u[2] = s[q2]
+        else:
+            print "ERROR", q2
+
         return u
+
+        # u = [0,0,0]
+        # q0 = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[1]+'),('+L[3]+','+L[2]+'));','(('+L[1]+','+L[0]+'),('+L[2]+','+L[3]+'));','(('+L[1]+','+L[0]+'),('+L[3]+','+L[2]+'));', '(('+L[2]+','+L[3]+'),('+L[0]+','+L[1]+'));','(('+L[2]+','+L[3]+'),('+L[1]+','+L[0]+'));','(('+L[3]+','+L[2]+'),('+L[0]+','+L[1]+'));','(('+L[3]+','+L[2]+'),('+L[1]+','+L[0]+'));']
+        # q1 = ['(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[3]+','+L[1]+'));','(('+L[2]+','+L[0]+'),('+L[1]+','+L[3]+'));','(('+L[2]+','+L[0]+'),('+L[3]+','+L[1]+'));','(('+L[1]+','+L[3]+'),('+L[0]+','+L[2]+'));','(('+L[1]+','+L[3]+'),('+L[2]+','+L[0]+'));','(('+L[3]+','+L[1]+'),('+L[0]+','+L[2]+'));','(('+L[3]+','+L[1]+'),('+L[2]+','+L[0]+'));']
+        # q2 = ['(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));', '(('+L[0]+','+L[3]+'),('+L[2]+','+L[1]+'));','(('+L[3]+','+L[0]+'),('+L[1]+','+L[2]+'));', '(('+L[3]+','+L[0]+'),('+L[2]+','+L[1]+'));','(('+L[1]+','+L[2]+'),('+L[0]+','+L[3]+'));','(('+L[1]+','+L[2]+'),('+L[3]+','+L[0]+'));','(('+L[2]+','+L[1]+'),('+L[0]+','+L[3]+'));','(('+L[2]+','+L[1]+'),('+L[3]+','+L[0]+'));']
+        # for i in range(8):
+        #     if q0[i] in s:
+        #         u[0] = s[q0[i]]
+        # for i in range(8):
+        #     if q1[i] in s:
+        #         u[1] = s[q1[i]]
+        # for i in range(8):
+        #     if q2[i] in s:
+        #         u[2] = s[q2[i]]
+        # return u
         
 #L same as get_freqs, i,j are indices of L specified as cherry of interest, func is string with name of penalty function 
     def quartet_score(self,L,i,j,func):
@@ -263,23 +320,34 @@ class QuartetsInfo:
         else:
             print "problem with quartet score input indices"
             print L, i, j
-        if func == 'inv3':
-            score = inv3(u1, u2, u3)
-        #a12 = min(u1-u2,0)
-        #a13 = min(u1-u3,0)
-        #score = abs(u2-u3) + (-1)*a12 + (-1)*a13
-            return score
+
+        #return u1
+#        if func == 'inv3':
+#            score = inv3(u1, u2, u3)
+        return u1
+        a12 = min(u1-u2,0)
+        a13 = min(u1-u3,0)
+        score = abs(u2-u3) + (-1)*a12 + (-1)*a13
+        return score
 
     def quartet_labels_dict(self):
+        if len(self.quartet_labels_dict_):
+            return self.quartet_labels_dict_
         g = self.quartet_dict()
         h = {}
         gkeys = g.keys()
-        for i in range(len(gkeys)):
-            keycopy = gkeys[i]
-            labellist = keycopy.split(',')
-            for j in range(4):
-                labellist[j] = labellist[j].translate(None,string.punctuation)        
-            h[gkeys[i]] = labellist
+        # for i in range(len(gkeys)):
+
+        #     keycopy = gkeys[i]
+        #     labellist = keycopy.split(',')
+        #     for j in range(4):
+        #         labellist[j] = labellist[j].translate(None,string.punctuation)        
+        #     h[gkeys[i]] = labellist
+
+        for i in gkeys:
+            h[i] = (i.data[0][0], i.data[0][1], i.data[1][0], i.data[1][1])
+
+        self.quartet_labels_dict_ = h
         return h
 
 #D1,D2  are two taxa labels as strings in alphabetical order
@@ -434,7 +502,7 @@ class SubsetPenalties:
         self.matrix_maker = matrixmaker.MatrixMaker(labels,setlist)
         self.matrix = self.matrix_maker.matrix()
         self.labels = self.matrix_maker.labels
-
+        self.SM_ = None
     #def pairs(self):
         #clist = copy.copy(self.setlist)
         #clabels = copy.copy(self.labels)
@@ -496,8 +564,8 @@ class SubsetPenalties:
 
 #need to enter score1, score2 for set1, set2 now: later can make this flexible? sets of size 1 and 2 are 0 and fixed. 
     def penalty_score(self,set1,set2,score1,score2):
-        g = self.quartetsinfo.quartet_dict()
-        h = self.quartetsinfo.quartet_labels_dict()
+#        g = self.quartetsinfo.quartet_dict()
+ #       h = self.quartetsinfo.quartet_labels_dict()
         #labs = self.labels
         #print labs, set1, set2
         AQ = self.add_quartets(set1,set2)
@@ -506,10 +574,10 @@ class SubsetPenalties:
         #print SQ
         score = score1 + score2
         for i in range(len(AQ)):
-            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2],'inv3')
+            score = score+self.quartetsinfo.quartet_score(AQ[i][0], AQ[i][1], AQ[i][2], None)
             #print score
         for j in range(len(SQ)): 
-            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2],'inv3')
+            score = score-self.quartetsinfo.quartet_score(SQ[j][0], SQ[j][1], SQ[j][2], None)
         return score
 
 #problem is finding min NONZERO entry here. 
@@ -549,7 +617,10 @@ class SubsetPenalties:
         #return SM
 
     def scored_matrix(self):
-        SM = np.zeros((len(self.setlist),len(self.setlist)))
+        if self.SM_ is not None:
+            return self.SM_
+        self.SM_ = np.zeros((len(self.setlist),len(self.setlist)))
+        SM = self.SM_
         SM.fill(np.inf)
         for i in range(len(self.setlist)):
             if len(self.setlist[i]) == 1:
@@ -905,12 +976,12 @@ def dendropy_clades_tree(Taxa,cladelist):
         if len(compl) > 0:
             half1 = '(('
             for k in range(len(cladelist[i])-1):
-                half1 = half1 + cladelist[i][k] + ','
-            half1 = half1 + cladelist[i][-1] +'),'
+                half1 = half1 + str(cladelist[i][k]) + ','
+            half1 = half1 + str(cladelist[i][-1]) +'),'
             half2 = '('
             for j in range(len(compl)-1):
-                half2 = half2 + compl[j] + ','
-            half2  = half2 + compl[-1] + '));'
+                half2 = half2 + str(compl[j]) + ','
+            half2  = half2 + str(compl[-1]) + '));'
             tree = half1+half2
             trees = trees+tree
     tmplist = dendropy.TreeList.get_from_string(trees,'newick')
@@ -994,7 +1065,7 @@ class FileClades:
         D = []
         for a in range(len(C)):
             if len(C[a]) > 0:
-                c = C[a].split(',')
+                c = [int (i) for i in C[a].split(',')]
                 c.sort()
                 D.append(c)
         D.reverse()
