@@ -263,6 +263,11 @@ class QuartetsInfo:
         return d
 
 #L is a list of four labels that are strings-alphabetical order required
+    def get_freq(self, q):
+        s = self.quartet_dict()
+        return s[q]
+
+
     def get_freqs(self,L):
         s = self.quartet_dict()
         #q = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));']
@@ -307,16 +312,17 @@ class QuartetsInfo:
         # return u
         
 #L same as get_freqs, i,j are indices of L specified as cherry of interest, func is string with name of penalty function 
+#    @profile
     def quartet_score(self,L,i,j,func):
         a = [i,j]
         a.sort()
-        f1, f2, f3 = self.get_freqs(L)
+        (w,x,y,z) = L
         if a in [[0,1], [2,3]]:
-            u1, u2, u3 = f1, f2, f3
+            u1 = self.get_freq(Quartet(((w,x),(y,z))))
         elif a in [[0,2], [1,3]]:
-            u1, u2, u3 = f2, f1, f3
+            u1 = self.get_freq(Quartet(((w,y),(x,z))))
         elif a in [[0,3], [1,2]]:
-            u1, u2, u3 = f3, f1, f2
+            u1 = self.get_freq(Quartet(((w,z),(y,x))))
         else:
             print "problem with quartet score input indices"
             print L, i, j
@@ -325,10 +331,6 @@ class QuartetsInfo:
 #        if func == 'inv3':
 #            score = inv3(u1, u2, u3)
         return u1
-        a12 = min(u1-u2,0)
-        a13 = min(u1-u3,0)
-        score = abs(u2-u3) + (-1)*a12 + (-1)*a13
-        return score
 
     def quartet_labels_dict(self):
         if len(self.quartet_labels_dict_):
@@ -563,6 +565,7 @@ class SubsetPenalties:
         return SQ
 
 #need to enter score1, score2 for set1, set2 now: later can make this flexible? sets of size 1 and 2 are 0 and fixed. 
+#    @profile
     def penalty_score(self,set1,set2,score1,score2):
 #        g = self.quartetsinfo.quartet_dict()
  #       h = self.quartetsinfo.quartet_labels_dict()
@@ -615,7 +618,7 @@ class SubsetPenalties:
                             #SM[i,twodex] = np.inf
         #print SM
         #return SM
-
+#    @profile
     def scored_matrix(self):
         if self.SM_ is not None:
             return self.SM_
