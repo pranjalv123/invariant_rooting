@@ -521,47 +521,38 @@ class SubsetPenalties:
         
         
     def add_quartets(self,set1,set2):
-        stuntlabels = []
-        for i in range(len(self.labels)):
-            stuntlabels.append(self.labels[i])
+        stuntlabels = list(self.labels)
         compl = set1 + set2
-        #print stuntlabels, compl
+
         for s in compl:
             stuntlabels.remove(s)
-            #print stuntlabels
-        #for t in set2:
-            #stuntlabels.remove(t)
-            #print stuntlabels
         A = itertools.combinations(stuntlabels,2)
         AA = list(A)
         SminusApairs = [list(AA[j]) for j in range(len(AA))]
         A1A2 = []
-        for k in range(len(set1)):
-            for l in range(len(set2)):
-                A1A2.append([set1[k],set2[l]])
+        for k in set1:
+            for l in set2:
+                A1A2.append([k,l])
         AQ = []
-        for m in range(len(A1A2)):
-            for n in range(len(SminusApairs)):
-                tmp = A1A2[m] + SminusApairs[n]
+        for m in A1A2:
+            for n in itertools.combinations(stuntlabels,2):
+                tmp = m + list(n)
                 tmp.sort()
-                AQ.append([tmp, tmp.index(A1A2[m][0]), tmp.index(A1A2[m][1])])
+                AQ.append([tmp, tmp.index(m[0]), tmp.index(m[1])])
         #print AQ
         return AQ
 
     def subtract_quartets(self,set1,set2):
-        a1 = itertools.combinations(set1,2)
-        a2 = itertools.combinations(set2,2)
-        aa1 = list(a1)
-        aa2 = list(a2)
-        A1 = [list(aa1[i]) for i in range(len(aa1))]
-        A2 = [list(aa2[j]) for j in range(len(aa2))]
         SQ = []
-        for m in range(len(A1)):
-            for n in range(len(A2)):
-                tmp = A1[m] + A2[n]
+        for mt in itertools.combinations(set1, 2):
+            m = list(mt)
+            for nt in itertools.combinations(set2,2):
+                n = list(nt)
+
+                tmp = m + n
                 tmp.sort()
-                SQ.append([tmp,tmp.index(A1[m][0]), tmp.index(A1[m][1])])
-        #print SQ
+
+                SQ.append([tmp,tmp.index(m[0]), tmp.index(m[1])])
         return SQ
 
 #need to enter score1, score2 for set1, set2 now: later can make this flexible? sets of size 1 and 2 are 0 and fixed. 
@@ -623,14 +614,17 @@ class SubsetPenalties:
         if self.SM_ is not None:
             return self.SM_
         self.SM_ = np.zeros((len(self.setlist),len(self.setlist)))
+        rowmins = np.zeros(len(self.setlist))
         SM = self.SM_
         SM.fill(np.inf)
+        rowmins.fill(np.inf)
+        setlist_index =  dict([(tuple(j), i) for i, j in enumerate(self.setlist)])
         for i in range(len(self.setlist)):
             if len(self.setlist[i]) == 1:
                 SM[i,i] = 0
             if len(self.setlist[i]) == 2:
-                m = self.setlist.index([self.setlist[i][0]])
-                n = self.setlist.index([self.setlist[i][1]])
+                m = setlist_index[tuple([self.setlist[i][0]])]
+                n = setlist_index[tuple([self.setlist[i][1]])]
                 SM[i,m] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
                 SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
             if len(self.setlist[i]) > 2:
@@ -638,14 +632,14 @@ class SubsetPenalties:
                 clist = copy.copy(self.setlist)
                 while len(clist) > 0:
                         one = clist.pop(0)
-                        onedex = self.setlist.index(one)
+                        onedex = setlist_index[tuple(one)]
                         if self.matrix[i,onedex] == 1:
                             two = list(set(clabels) - set(one))
                             one.sort()
                             two.sort()
                             if two in clist:
                                 clist.remove(two)
-                                twodex = self.setlist.index(two)
+                                twodex = setlist_index[tuple(two)]
                                 SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                                 SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
                         #else: 
