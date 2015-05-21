@@ -12,11 +12,15 @@ class MatrixMaker:
         self.binlabels = {}
         for i in range(len(labels)):
             self.binlabels[labels[i]] = 2**i
+        self.binsets = {}
 
     def binset(self, setlistentry):
+        if tuple(setlistentry) in self.binsets:
+            return self.binsets[tuple(setlistentry)]
         b = 0
         for j in range(len(setlistentry)):
             b = b + self.binlabels[setlistentry[j]]
+        self.binsets[tuple(setlistentry)] = b
         return b
        
     def inclusion(self, set1, set2):

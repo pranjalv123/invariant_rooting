@@ -16,8 +16,7 @@ L = ['I', 'H', 'F', 'G', 'E', 'A', 'B', 'D', 'C', 'J']
 
 L =[int (i) for i in  complementquartets(open(fixedfile), open(quartetsfile, 'w'))]
 
-print 'taxon set is'
-print L
+print 'taxon set is', len(L)
 
 
 F = InvariantScores.FileClades(cladesfile)

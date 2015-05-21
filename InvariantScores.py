@@ -217,10 +217,10 @@ class Quartet:
             a, b = qt.split('),(') 
             a1, a2 = a.replace('(', '').replace(')', '').replace(';', '').split(',')
             b1, b2 = b.replace('(', '').replace(')', '').replace(';', '').split(',')
-            self.data = self.canonicalize(((int(a1), int(a2)), (int(b1), int(b2))))
+            self.data = self.canonicalize(((int(a1), int(a2), int(b1), int(b2))))
         else:
             self.data = self.canonicalize(qt)
-    def canonicalize(self, ((a1, a2), (b1, b2))):
+    def canonicalize(self, ((a1, a2, b1, b2))):
         if a1 < a2:
             a = (a1, a2)
         else:
@@ -230,9 +230,9 @@ class Quartet:
         else:
             b = (b2, b1)
         if a < b:
-            return (a, b)
+            return (a + b)
         else:
-            return (b, a)
+            return (b + a)
                 
     def __eq__(self, other):
         return self.data == other.data
@@ -312,17 +312,19 @@ class QuartetsInfo:
         # return u
         
 #L same as get_freqs, i,j are indices of L specified as cherry of interest, func is string with name of penalty function 
-#    @profile
+#    @profile    
     def quartet_score(self,L,i,j,func):
-        a = [i,j]
-        a.sort()
+        if j < i:
+            a = (j, i)
+        else:
+            a = (i, j)
         (w,x,y,z) = L
-        if a in [[0,1], [2,3]]:
-            u1 = self.get_freq(Quartet(((w,x),(y,z))))
-        elif a in [[0,2], [1,3]]:
-            u1 = self.get_freq(Quartet(((w,y),(x,z))))
-        elif a in [[0,3], [1,2]]:
-            u1 = self.get_freq(Quartet(((w,z),(y,x))))
+        if a in [(0,1), (2,3)]:
+            u1 = self.get_freq(Quartet(((w,x,y,z))))
+        elif a in [(0,2), (1,3)]:
+            u1 = self.get_freq(Quartet(((w,y,x,z))))
+        elif a in [(0,3), (1,2)]:
+            u1 = self.get_freq(Quartet(((w,z,y,x))))
         else:
             print "problem with quartet score input indices"
             print L, i, j
@@ -391,112 +393,6 @@ class QuartetsInfo:
                 score = score + newscore
         return score
 
-class QuartetsInfoInequalitiesOnly:
-    def __init__(self,quartetsfile):
-        self.filename = quartetsfile
-        #self.quartet_dict = {}
-        #with open(quartetsfile) as f:
-            #for line in f:
-                #(key,val) = line.split()
-                #self.quartet_dict[key] = int(val)
-    def quartet_dict(self):
-        d = {}
-        with open(self.filename) as f:
-            for line in f:
-                (key,val) = line.split()
-                d[key] = int(val)
-        return d
-
-#L is a list of four labels that are strings
-    def get_freqs(self,L):
-        s = self.quartet_dict()
-        #q = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));']
-        #u = [0,0,0]
-        #for i in range(3):
-        #    if q[i] in s:
-        #        u[i] = s[q[i]]
-        u = [0,0,0]
-        q0 = ['(('+L[0]+','+L[1]+'),('+L[2]+','+L[3]+'));','(('+L[0]+','+L[1]+'),('+L[3]+','+L[2]+'));','(('+L[1]+','+L[0]+'),('+L[2]+','+L[3]+'));','(('+L[1]+','+L[0]+'),('+L[3]+','+L[2]+'));', '(('+L[2]+','+L[3]+'),('+L[0]+','+L[1]+'));','(('+L[2]+','+L[3]+'),('+L[1]+','+L[0]+'));','(('+L[3]+','+L[2]+'),('+L[0]+','+L[1]+'));','(('+L[3]+','+L[2]+'),('+L[1]+','+L[0]+'));']
-        q1 = ['(('+L[0]+','+L[2]+'),('+L[1]+','+L[3]+'));','(('+L[0]+','+L[2]+'),('+L[3]+','+L[1]+'));','(('+L[2]+','+L[0]+'),('+L[1]+','+L[3]+'));','(('+L[2]+','+L[0]+'),('+L[3]+','+L[1]+'));','(('+L[1]+','+L[3]+'),('+L[0]+','+L[2]+'));','(('+L[1]+','+L[3]+'),('+L[2]+','+L[0]+'));','(('+L[3]+','+L[1]+'),('+L[0]+','+L[2]+'));','(('+L[3]+','+L[1]+'),('+L[2]+','+L[0]+'));']
-        q2 = ['(('+L[0]+','+L[3]+'),('+L[1]+','+L[2]+'));', '(('+L[0]+','+L[3]+'),('+L[2]+','+L[1]+'));','(('+L[3]+','+L[0]+'),('+L[1]+','+L[2]+'));', '(('+L[3]+','+L[0]+'),('+L[2]+','+L[1]+'));','(('+L[1]+','+L[2]+'),('+L[0]+','+L[3]+'));','(('+L[1]+','+L[2]+'),('+L[3]+','+L[0]+'));','(('+L[2]+','+L[1]+'),('+L[0]+','+L[3]+'));','(('+L[2]+','+L[1]+'),('+L[3]+','+L[0]+'));']
-        for i in range(8):
-            if q0[i] in s:
-                u[0] = s[q0[i]]
-        for i in range(8):
-            if q1[i] in s:
-                u[1] = s[q1[i]]
-        for i in range(8):
-            if q2[i] in s:
-                u[2] = s[q2[i]]
-        return u
-        
-        
-#L same as get_freqs, i,j are indices of L specified as cherry of interest
-    def quartet_score(self,L,i,j):
-        a = [i,j]
-        a.sort()
-        f1, f2, f3 = self.get_freqs(L)
-        if a in [[0,1], [2,3]]:
-            u1, u2, u3 = f1, f2, f3
-        elif a in [[0,2], [1,3]]:
-            u1, u2, u3 = f2, f1, f3
-        elif a in [[0,3], [1,2]]:
-            u1, u2, u3 = f3, f1, f2
-        else:
-            print "problem with quartet score input indices"
-            print L, i, j
-        a12 = min(u1-u2,0)
-        a13 = min(u1-u3,0)
-        score = (-1)*a12 + (-1)*a13
-        return score
-
-    def quartet_labels_dict(self):
-        g = self.quartet_dict()
-        h = {}
-        gkeys = g.keys()
-        for i in range(len(gkeys)):
-            keycopy = gkeys[i]
-            labellist = keycopy.split(',')
-            for j in range(4):
-                labellist[j] = labellist[j].translate(None,string.punctuation)        
-            h[gkeys[i]] = labellist
-        return h
-
-#D1,D2  are two taxa labels as strings in alphabetical order
-    def score_double(self,D1,D2):
-        g = self.quartet_dict()
-        h = self.quartet_labels_dict()
-        #print g
-        #print h
-        score = 0
-        for k in g:
-            if '(' + D1 + ',' + D2 + ')' in k:
-                #print k
-                newscore = self.quartet_score(h[k], h[k].index(D1), h[k].index(D2))
-                #print newscore
-                score = score + newscore
-        return score
-
-    #def penalty_score(self, subset1, subset2):
-        
-    def score_tree(self,treequartetsfile):
-        treelist = []
-        with open(treequartetsfile) as f:
-            for line in f:
-                (keygen,val) = line.split()
-                labellist = keygen.split(',')
-                for j in range(4):
-                    labellist[j] = labellist[j].translate(None,string.punctuation)        
-                treelist.append(labellist)
-        #print treelist
-        score = 0
-        for k in range(len(treelist)):
-                newscore = self.quartet_score(treelist[k],0,1)
-                #print newscore
-                score = score + newscore
-        return score
-
-
 class SubsetPenalties:
     def __init__(self,labels,setlist,quartetsfile):
         self.quartetsinfo = QuartetsInfo(quartetsfile)
@@ -526,9 +422,7 @@ class SubsetPenalties:
 
         for s in compl:
             stuntlabels.remove(s)
-        A = itertools.combinations(stuntlabels,2)
-        AA = list(A)
-        SminusApairs = [list(AA[j]) for j in range(len(AA))]
+
         A1A2 = []
         for k in set1:
             for l in set2:
@@ -629,19 +523,19 @@ class SubsetPenalties:
                 SM[i,n] = self.penalty_score([self.setlist[i][0]], [self.setlist[i][1]], 0, 0)
             if len(self.setlist[i]) > 2:
                 clabels = copy.copy(self.setlist[i])
-                clist = copy.copy(self.setlist)
+                clist = set([tuple(x) for x in self.setlist])
                 while len(clist) > 0:
-                        one = clist.pop(0)
+                        one = tuple(sorted(clist.pop()))
                         onedex = setlist_index[tuple(one)]
                         if self.matrix[i,onedex] == 1:
-                            two = list(set(clabels) - set(one))
-                            one.sort()
-                            two.sort()
+                            two = tuple(sorted(list(set(clabels) - set(one))))
                             if two in clist:
                                 clist.remove(two)
                                 twodex = setlist_index[tuple(two)]
-                                SM[i,onedex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
-                                SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+                                SM[i,onedex] = self.penalty_score(one, two, rowmins[onedex], rowmins[twodex])
+                                SM[i,twodex] = SM[i, onedex]
+#                                SM[i,twodex] = self.penalty_score(one, two, min(SM[onedex]), min(SM[twodex]))
+            rowmins[i] = min(SM[i])
                         #else: 
         return SM
 
